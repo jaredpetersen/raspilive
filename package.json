@@ -1,0 +1,15 @@
+{
+  "name": "raspi-security-cam",
+  "version": "0.0.1",
+  "description": "Stream video from the raspberry pi to the web",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Jared Petersen <jaredtoddpetersen@gmail.com> (https://github.com/jaredpetersen/)",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.15.2",
+    "fluent-ffmpeg": "^2.1.0"
+  }
+}
