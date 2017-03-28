@@ -17,7 +17,7 @@ if (fs.existsSync(cameraName) === false) {
 let cameraStream = spawn('raspivid', ['-o', '-', '-t', '0', '-n', '-h', '360', '-w', '640']);
 
 // Convert the camera stream to hls
-let conversion = new ffmpeg(cameraStream.stdout).noAudio().format('hls').inputOptions(['-re']).output(`camera/${cameraName}.m3u8`);
+let conversion = new ffmpeg(cameraStream.stdout).noAudio().format('hls').inputOptions(['-re']).output(`${cameraName}/${cameraName}.m3u8`);
 
 // Set up listeners
 conversion.on('error', function(err, stdout, stderr) {
