@@ -1,17 +1,23 @@
 let express = require('express');
 let app = express();
-let path = require('path');
 let spawn = require('child_process').spawn;
 let ffmpeg = require('fluent-ffmpeg');
-let streamPass = require('stream').PassThrough;
+let fs = require('fs');
+let path = require('path');
+let cameraName = 'camera';
 let port = 8080;
+
+// Create the camera output directory if it doesn't already exist
+if (fs.existsSync(cameraName) === false) {
+  fs.mkdirSync(cameraName);
+}
 
 // Start the camera stream
 // Have to do a smaller size otherwise FPS takes a massive hit :(
 let cameraStream = spawn('raspivid', ['-o', '-', '-t', '0', '-n', '-h', '360', '-w', '640']);
 
 // Convert the camera stream to hls
-let conversion = new ffmpeg(cameraStream.stdout).noAudio().format('hls').inputOptions(['-re']);
+let conversion = new ffmpeg(cameraStream.stdout).noAudio().format('hls').inputOptions(['-re']).output(`${cameraName}/${cameraName}.m3u8`);
 
 // Set up listeners
 conversion.on('error', function(err, stdout, stderr) {
@@ -26,10 +32,8 @@ conversion.on('stderr', function(stderrLine) {
   console.log('Stderr output: ' + stderrLine);
 });
 
-// Output the conversion to a stream
-// Can't just pipe directly off of conversionStream for every request, since ffmpeg only allows 1 stream output
-let conversionStream = new streamPass;
-conversion.pipe(conversionStream);
+// Start the conversion
+conversion.run();
 
 // Express middleware
 app.use(function(req, res, next) {
@@ -39,9 +43,19 @@ app.use(function(req, res, next) {
   next();
 });
 
-app.get('/camera/1', (req, res) => {
+// Essentially create a file server on the camera directory
+app.get('/camera/:id', (req, res) => {
   res.set('Content-Type', 'application/x-mpegURL');
-  conversionStream.pipe(res);
+  let filepath = path.join(__dirname, cameraName, req.params.id);
+  let readStream = fs.createReadStream(filepath);
+
+  readStream.on('open', () => {
+    readStream.pipe(res);
+  });
+
+  readStream.on('error', (err) => {
+    res.status(400).json({'message': 'not found'});
+  });
 });
 
 console.log(`STARTING CAMERA STREAM SERVER AT PORT ${port}`);
