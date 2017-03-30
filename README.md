@@ -1,4 +1,4 @@
-# Live Pi
+# raspi-live
 Stream live video from the Raspberry Pi camera module to the web using HLS
 
 ## Dependencies
