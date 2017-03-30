@@ -8,6 +8,7 @@ let cameraName = 'camera';
 let port = 8080;
 
 // Create the camera output directory if it doesn't already exist
+// Directory contains all of the streaming video files
 if (fs.existsSync(cameraName) === false) {
   fs.mkdirSync(cameraName);
 }
@@ -17,7 +18,7 @@ if (fs.existsSync(cameraName) === false) {
 let cameraStream = spawn('raspivid', ['-o', '-', '-t', '0', '-n', '-h', '360', '-w', '640']);
 
 // Convert the camera stream to hls
-let conversion = new ffmpeg(cameraStream.stdout).noAudio().format('hls').inputOptions(['-re']).output(`${cameraName}/${cameraName}.m3u8`);
+let conversion = new ffmpeg(cameraStream.stdout).noAudio().format('hls').inputOptions('-re').outputOptions('-hls_wrap 20').output(`${cameraName}/${cameraName}.m3u8`);
 
 // Set up listeners
 conversion.on('error', function(err, stdout, stderr) {
@@ -35,27 +36,20 @@ conversion.on('stderr', function(stderrLine) {
 // Start the conversion
 conversion.run();
 
-// Express middleware
-app.use(function(req, res, next) {
-  // Allow CORs
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  next();
-});
-
 // Essentially create a file server on the camera directory
 app.get('/camera/:id', (req, res) => {
+  // Content is HLS
   res.set('Content-Type', 'application/x-mpegURL');
+
+  // Allow CORS
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+
+  // Read the file and output it
   let filepath = path.join(__dirname, cameraName, req.params.id);
   let readStream = fs.createReadStream(filepath);
-
-  readStream.on('open', () => {
-    readStream.pipe(res);
-  });
-
-  readStream.on('error', (err) => {
-    res.status(400).json({'message': 'not found'});
-  });
+  readStream.on('open', () => { readStream.pipe(res); });
+  readStream.on('error', (err) => { res.status(400).json({'message': 'not found'}); });
 });
 
 console.log(`STARTING CAMERA STREAM SERVER AT PORT ${port}`);
