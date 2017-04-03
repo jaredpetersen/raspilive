@@ -36,21 +36,14 @@ conversion.on('stderr', function(stderrLine) {
 // Start the conversion
 conversion.run();
 
-// Essentially create a file server for the camera directory
-app.get(`/${cameraName}/:id`, (req, res) => {
-  // Content is HLS
-  res.set('Content-Type', 'application/x-mpegURL');
-
-  // Allow CORS
+// Allows CORS
+let setHeaders = (res, path) => {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+};
 
-  // Read the file and output it
-  let filepath = path.join(__dirname, cameraName, req.params.id);
-  let readStream = fs.createReadStream(filepath);
-  readStream.on('open', () => { readStream.pipe(res); });
-  readStream.on('error', (err) => { res.status(400).json({'message': 'not found'}); });
-});
+// Set up a fileserver for the streaming video files
+app.use(`/${cameraName}`, express.static(cameraName, {'setHeaders': setHeaders}));
 
 console.log(`STARTING CAMERA STREAM SERVER AT PORT ${port}`);
 app.listen(port);
