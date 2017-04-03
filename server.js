@@ -5,11 +5,12 @@ let ffmpeg = require('fluent-ffmpeg');
 let fs = require('fs');
 let crypto = require('crypto');
 
-let cameraName = 'camera';
-let keyFile = 'video.key';
-let keyInfoFile = 'video.keyinfo';
-let port = 8080;
-let baseUrl = `http://192.168.1.181:${port}`;
+const config = require('./config.json');
+const baseUrl = config.baseUrl;
+const port = config.port;
+const cameraName = config.cameraName;
+const keyFileName = config.keyFileName;
+const keyInfoFileName = config.keyInfoFileName;
 
 // Create the camera output directory if it doesn't already exist
 // Directory contains all of the streaming video files
@@ -20,18 +21,18 @@ if (fs.existsSync(cameraName) === false) {
 // Setup encryption
 let keyFileContents = crypto.randomBytes(16);
 let initializationVector = crypto.randomBytes(16).toString('hex');
-let keyInfoFileContents = `${baseUrl}/${cameraName}/${keyFile}\n./${cameraName}/${keyFile}\n${initializationVector}`;
+let keyInfoFileContents = `${baseUrl}/${cameraName}/${keyFileName}\n./${cameraName}/${keyFileName}\n${initializationVector}`;
 
 // Populate the encryption files, overwrite them if necessary
-fs.writeFileSync(`./${cameraName}/${keyFile}`, keyFileContents);
-fs.writeFileSync(keyInfoFile, keyInfoFileContents);
+fs.writeFileSync(`./${cameraName}/${keyFileName}`, keyFileContents);
+fs.writeFileSync(keyInfoFileName, keyInfoFileContents);
 
 // Start the camera stream
 // Have to do a smaller size otherwise FPS takes a massive hit :(
 let cameraStream = spawn('raspivid', ['-o', '-', '-t', '0', '-n', '-h', '360', '-w', '640']);
 
 // Convert the camera stream to hls
-let conversion = new ffmpeg(cameraStream.stdout).noAudio().format('hls').inputOptions('-re').outputOptions(['-hls_wrap 20', `-hls_key_info_file ${keyInfoFile}`]).output(`${cameraName}/livestream.m3u8`);
+let conversion = new ffmpeg(cameraStream.stdout).noAudio().format('hls').inputOptions('-re').outputOptions(['-hls_wrap 20', `-hls_key_info_file ${keyInfoFileName}`]).output(`${cameraName}/livestream.m3u8`);
 
 // Set up listeners
 conversion.on('error', function(err, stdout, stderr) {
