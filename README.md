@@ -2,7 +2,7 @@
 Stream live video from the Raspberry Pi camera module to the web using HLS
 
 ## Starting the Live Stream
-Install all of the raspi-live dependencies and then run the usual `npm start`. The application will start streaming the video from the Raspberry Pi camera module via the `/camera/livestream.m3u8` resource on port 8080.
+Install all of the raspi-live dependencies and then run the usual `npm start`. The application will start streaming encrypted video from the Raspberry Pi camera module via the `/camera/livestream.m3u8` resource on port 8080.
 
 ## Dependencies
 Raspi-live uses FFmpeg, a video conversion command-line utility, to process the streaming H.264 video that the Raspberry Pi camera module outputs. The [Hannes ihm sein Blog](http://hannes.enjoys.it/blog/2016/03/ffmpeg-on-raspbian-raspberry-pi/) has a great guide on how to install FFmpeg on the Raspberry Pi if you are not familiar with the process.
