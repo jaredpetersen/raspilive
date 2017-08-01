@@ -29,10 +29,10 @@ fs.writeFileSync(keyInfoFileName, keyInfoFileContents);
 
 // Start the camera stream
 // Have to do a smaller size otherwise FPS takes a massive hit :(
-let cameraStream = spawn('raspivid', ['-o', '-', '-t', '0', '-n', '-h', '360', '-w', '640']);
+let cameraStream = spawn('raspivid', ['-o', '-', '-t', '0', '-vf', '-fps', '30']);
 
 // Convert the camera stream to hls
-let conversion = new ffmpeg(cameraStream.stdout).noAudio().format('hls').inputOptions('-re').outputOptions(['-hls_wrap 20', `-hls_key_info_file ${keyInfoFileName}`]).output(`${cameraName}/livestream.m3u8`);
+let conversion = new ffmpeg(cameraStream.stdout).noAudio().format('hls').inputOptions('-re').outputOptions(['-vcodec copy', '-g 50', '-hls_wrap 20', `-hls_key_info_file ${keyInfoFileName}`]).output(`${cameraName}/livestream.m3u8`);
 
 // Set up listeners
 conversion.on('error', function(err, stdout, stderr) {
