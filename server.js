@@ -1,5 +1,6 @@
 let express = require('express');
 let app = express();
+let cors = require('cors');
 let spawn = require('child_process').spawn;
 let ffmpeg = require('fluent-ffmpeg');
 let fs = require('fs');
@@ -51,13 +52,10 @@ conversion.on('stderr', function(stderrLine) {
 conversion.run();
 
 // Allows CORS
-let setHeaders = (res, path) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-};
+app.use(cors());
 
 // Set up a fileserver for the streaming video files
-app.use(`/${cameraName}`, express.static(cameraName, {'setHeaders': setHeaders}));
+app.use(`/${cameraName}`, express.static(cameraName));
 
-console.log(`STARTING CAMERA STREAM SERVER AT PORT ${port}`);
 app.listen(port);
+console.log(`STARTING CAMERA STREAM SERVER AT PORT ${port}`);
