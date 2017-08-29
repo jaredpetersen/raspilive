@@ -1,6 +1,7 @@
 {
   "port": 8080,
   "cameraName": "camera",
+  "hlsListSize": 14400,
   "hlsEncryption":
   {
     "enabled": false,

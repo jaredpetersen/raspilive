@@ -10,12 +10,14 @@ let crypto = require('crypto');
 const config = require('./config.json');
 const port = config.port;
 const cameraName = config.cameraName;
+const hlsListSize = config.hlsListSize;
 const hlsEncryptionEnabled = config.hlsEncryption.enabled;
 
 // Camera stream options
 const raspividOptions = ['-o', '-', '-t', '0', '-vf', '-w', '1280', '-h', '720', '-fps', '30']; 
 const ffmpegInputOptions = ['-re'];
-const ffmpegOutputOptions = ['-vcodec copy', '-g 50', '-hls_wrap 20'];
+//const ffmpegOutputOptions = ['-vcodec copy', '-g 50', `-hls_wrap ${hlsWrapLength}`];
+const ffmpegOutputOptions = ['-vcodec copy', '-g 50', `-hls_list_size ${hlsListSize}`, '-hls_flags delete_segments'];
 
 // Create the camera output directory if it doesn't already exist
 // Directory contains all of the streaming video files
