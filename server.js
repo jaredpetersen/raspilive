@@ -21,6 +21,8 @@ const ffmpegOutputOptions = ['-vcodec copy', '-g 50', `-hls_list_size ${hlsListS
 
 // Create the camera output directory if it doesn't already exist
 // Directory contains all of the streaming video files
+// We don't want the async version since this only is run once at startup and the directory needs to be created
+// before we can really do anything else
 if (fs.existsSync(cameraName) === false) {
   fs.mkdirSync(cameraName);
 }
