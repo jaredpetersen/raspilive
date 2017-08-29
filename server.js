@@ -13,7 +13,7 @@ const cameraName = config.cameraName;
 const hlsEncryptionEnabled = config.hlsEncryption.enabled;
 
 // Camera stream options
-const raspividOptions = ['-o', '-', '-t', '0', '-vf', '-fps', '30']; 
+const raspividOptions = ['-o', '-', '-t', '0', '-vf', '-w', '1280', '-h', '720', '-fps', '30']; 
 const ffmpegInputOptions = ['-re'];
 const ffmpegOutputOptions = ['-vcodec copy', '-g 50', '-hls_wrap 20'];
 
