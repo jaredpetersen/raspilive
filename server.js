@@ -11,16 +11,15 @@ const config = require('./config.json');
 const port = config.port;
 const encrypted = config.encrypted;
 
-// Public directory that stores the stream files
-const cameraDirectory = 'camera';
-
 // Camera stream options
 const raspividOptions = ['-o', '-', '-t', '0', '-vf', '-hf', '-w', '1280', '-h', '720', '-fps', '25']; 
 const ffmpegInputOptions = ['-re'];
 const ffmpegOutputOptions = ['-vcodec copy', '-hls_flags delete_segments'];
 
+// Public directory that stores the stream files
+const cameraDirectory = 'camera';
+
 // Create the camera output directory if it doesn't already exist
-// Directory contains all of the streaming video files
 // We don't want the async version since this only is run once at startup and the directory needs to be created
 // before we can really do anything else
 if (fs.existsSync(cameraDirectory) === false) {
