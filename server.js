@@ -9,38 +9,41 @@ let crypto = require('crypto');
 // Config information
 const config = require('./config.json');
 const port = config.port;
-const cameraName = config.cameraName;
-const hlsListSize = config.hlsListSize;
 const hlsEncryptionEnabled = config.hlsEncryption.enabled;
 
+// Public directory that stores the stream files
+const cameraDirectory = 'camera';
+
 // Camera stream options
-const raspividOptions = ['-o', '-', '-t', '0', '-vf', '-w', '1280', '-h', '720', '-fps', '30']; 
+const raspividOptions = ['-o', '-', '-t', '0', '-vf', '-w', '1280', '-h', '720', '-fps', '25']; 
 const ffmpegInputOptions = ['-re'];
-//const ffmpegOutputOptions = ['-vcodec copy', '-g 50', `-hls_wrap ${hlsWrapLength}`];
-const ffmpegOutputOptions = ['-vcodec copy', '-g 50', `-hls_list_size ${hlsListSize}`, '-hls_flags delete_segments'];
+const ffmpegOutputOptions = ['-vcodec copy', '-hls_flags delete_segments'];
 
 // Create the camera output directory if it doesn't already exist
 // Directory contains all of the streaming video files
 // We don't want the async version since this only is run once at startup and the directory needs to be created
 // before we can really do anything else
-if (fs.existsSync(cameraName) === false) {
-  fs.mkdirSync(cameraName);
+if (fs.existsSync(cameraDirectory) === false) {
+  fs.mkdirSync(cameraDirectory);
 }
 
 // Encrypt HLS stream?
 if (hlsEncryptionEnabled) {
-  // Config information for hls encryption
+  // Public base URL that is used to grab the encryption files
+  // Useful in the case that you hide the camera stream behind a proxy
   const publicBaseURL = config.hlsEncryption.publicBaseURL;
-  const keyFileName = config.hlsEncryption.keyFileName;
-  const keyInfoFileName = config.hlsEncryption.keyInfoFileName;
+
+  // Encryption files
+  const keyFileName = 'enc.key';
+  const keyInfoFileName = 'enc.keyinfo';
 
   // Setup encryption
   let keyFileContents = crypto.randomBytes(16);
   let initializationVector = crypto.randomBytes(16).toString('hex');
-  let keyInfoFileContents = `${publicBaseURL}/${keyFileName}\n./${cameraName}/${keyFileName}\n${initializationVector}`;
+  let keyInfoFileContents = `${publicBaseURL}/${keyFileName}\n./${cameraDirectory}/${keyFileName}\n${initializationVector}`;
 
   // Populate the encryption files, overwrite them if necessary
-  fs.writeFileSync(`./${cameraName}/${keyFileName}`, keyFileContents);
+  fs.writeFileSync(`./${cameraDirectory}/${keyFileName}`, keyFileContents);
   fs.writeFileSync(keyInfoFileName, keyInfoFileContents);
 
   // Add an option to the output stream to include the key info file in the livestream playlist
@@ -51,7 +54,7 @@ if (hlsEncryptionEnabled) {
 let cameraStream = spawn('raspivid', raspividOptions);
 
 // Convert the camera stream to hls
-let conversion = new ffmpeg(cameraStream.stdout).noAudio().format('hls').inputOptions(ffmpegInputOptions).outputOptions(ffmpegOutputOptions).output(`${cameraName}/livestream.m3u8`);
+let conversion = new ffmpeg(cameraStream.stdout).noAudio().format('hls').inputOptions(ffmpegInputOptions).outputOptions(ffmpegOutputOptions).output(`${cameraDirectory}/livestream.m3u8`);
 
 // Set up stream conversion listeners
 conversion.on('error', function(err, stdout, stderr) {
@@ -73,7 +76,7 @@ conversion.run();
 app.use(cors());
 
 // Set up a fileserver for the streaming video files
-app.use(`/${cameraName}`, express.static(cameraName));
+app.use(`/${cameraDirectory}`, express.static(cameraDirectory));
 
 app.listen(port);
 console.log(`STARTING CAMERA STREAM SERVER AT PORT ${port}`);

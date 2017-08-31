@@ -1,12 +1,8 @@
 {
   "port": 8080,
-  "cameraName": "camera",
-  "hlsListSize": 14400,
   "hlsEncryption":
   {
     "enabled": false,
-    "publicBaseURL": "http://24.20.251.193:3000/camera/0",
-    "keyFileName": "enc.key",
-    "keyInfoFileName": "enc.keyinfo"
+    "publicBaseURL": "http://24.20.251.193:3000/camera/1"
   }
 }
