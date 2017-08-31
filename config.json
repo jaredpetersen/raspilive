@@ -1,8 +1,4 @@
 {
   "port": 8080,
-  "hlsEncryption":
-  {
-    "enabled": false,
-    "publicBaseURL": "http://24.20.251.193:3000/camera/1"
-  }
+  "encrypted": true
 }

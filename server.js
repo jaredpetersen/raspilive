@@ -9,13 +9,13 @@ let crypto = require('crypto');
 // Config information
 const config = require('./config.json');
 const port = config.port;
-const hlsEncryptionEnabled = config.hlsEncryption.enabled;
+const encrypted = config.encrypted;
 
 // Public directory that stores the stream files
 const cameraDirectory = 'camera';
 
 // Camera stream options
-const raspividOptions = ['-o', '-', '-t', '0', '-vf', '-w', '1280', '-h', '720', '-fps', '25']; 
+const raspividOptions = ['-o', '-', '-t', '0', '-vf', '-hf', '-w', '1280', '-h', '720', '-fps', '25']; 
 const ffmpegInputOptions = ['-re'];
 const ffmpegOutputOptions = ['-vcodec copy', '-hls_flags delete_segments'];
 
@@ -28,11 +28,7 @@ if (fs.existsSync(cameraDirectory) === false) {
 }
 
 // Encrypt HLS stream?
-if (hlsEncryptionEnabled) {
-  // Public base URL that is used to grab the encryption files
-  // Useful in the case that you hide the camera stream behind a proxy
-  const publicBaseURL = config.hlsEncryption.publicBaseURL;
-
+if (encrypted) {
   // Encryption files
   const keyFileName = 'enc.key';
   const keyInfoFileName = 'enc.keyinfo';
@@ -40,7 +36,7 @@ if (hlsEncryptionEnabled) {
   // Setup encryption
   let keyFileContents = crypto.randomBytes(16);
   let initializationVector = crypto.randomBytes(16).toString('hex');
-  let keyInfoFileContents = `${publicBaseURL}/${keyFileName}\n./${cameraDirectory}/${keyFileName}\n${initializationVector}`;
+  let keyInfoFileContents = `${keyFileName}\n./${cameraDirectory}/${keyFileName}\n${initializationVector}`;
 
   // Populate the encryption files, overwrite them if necessary
   fs.writeFileSync(`./${cameraDirectory}/${keyFileName}`, keyFileContents);
