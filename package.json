@@ -9,6 +9,7 @@
   "author": "Jared Petersen <jaredtoddpetersen@gmail.com> (https://github.com/jaredpetersen/)",
   "license": "MIT",
   "dependencies": {
+    "cors": "^2.8.4",
     "express": "^4.15.2",
     "fluent-ffmpeg": "^2.1.0"
   }
