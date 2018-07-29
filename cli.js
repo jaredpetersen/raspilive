@@ -1,0 +1,30 @@
+#!/usr/bin/env node
+
+'use strict';
+
+const program = require('commander');
+const info = require('./package.json');
+
+// Coercion function for integers
+const int = (value) => parseInt(value, 10);
+
+process.title = 'raspi-live';
+
+program
+  .name(info.name)
+  .description(info.description)
+  .version(info.version, '-v, --version');
+
+program
+  .command('start')
+  .description('start the raspberry pi live-streaming server')
+  .option('-d, --directory <directory>', 'streaming video file hosting location', '/srv/camera')
+  .option('-f, --format [format]', 'video streaming format [hls, mpeg-dash]', /^(hls|mpeg-dash)$/i, 'hls')
+  .option('-p, --port <port>', 'port number the server runs on', int, 8080)
+  .action(({ directory, format, port }) => {
+    server(directory, format, port);
+  });
+
+program.parse(process.argv);
+
+if (!program.args.length) program.help();

@@ -1,30 +1,85 @@
 # raspi-live
-raspi-live is a Node.js Express webserver that takes streaming video from the Raspberry Pi Camera module and makes it available on the web via [HLS](https://en.wikipedia.org/wiki/HTTP_Live_Streaming).
+raspi-live is a Node.js Express webserver that takes streaming video from the Raspberry Pi Camera module and makes it available on the web via [HLS](https://en.wikipedia.org/wiki/HTTP_Live_Streaming) or [MPEG-DASH](https://en.wikipedia.org/wiki/Dynamic_Adaptive_Streaming_over_HTTP).
+
+Run it via a simple command line interface:
+```
+raspi-live start
+```
 
 ## Usage
-Run the usual `npm start` after downloading all of the dependencies. The application will start providing AES-128 encrypted streaming video from the Raspberry Pi camera module via the `/camera/livestream.m3u8` resource on port 8080.
+```
+$ raspi-live --help
 
-To disable stream encryption or change the port number, edit the `config.json` file.
+  Usage: raspi-live [options] [command]
 
-## Installation
+    Options:
+
+      -v, --version                         output the version number
+      -h, --help                            output usage information
+
+    Commands:
+
+      start [options] <directory> <format>  start the raspberry pi live-streaming server
+```
+
+### Options
+#### -v, --version
+Output the version number.
+
+#### -h, --help
+Output information on how to use the command line interface.
+
+### Commands
+#### start \[options\]
+Start the raspberry pi live-streaming server from the specified directory and using the specified format.
+
+##### Options
+###### -d, --directory
+The specified directory will be used to host the streaming video files. Those concerned about the long-term health of their pi's SD card may opt to point raspi-live to a RAMDisk so that the files are only stored in memory. However, this also means that you will be unable to recover any of the footage if the power is cut.
+
+Defaults to `/srv/camera`.
+
+###### -f, --format
+* [`hls`](https://en.wikipedia.org/wiki/HTTP_Live_Streaming) (default)
+* [`mpeg-dash`](https://en.wikipedia.org/wiki/Dynamic_Adaptive_Streaming_over_HTTP)
+
+###### -p, --port
+Port number the server runs on. Defaults to `8080`.
+
+
+## Install
+### Raspberry Pi Camera module
 raspi-live only supports streaming video from the Raspberry Pi camera module. Here's a the official documentation on how to connect and configure it: https://www.raspberrypi.org/documentation/usage/camera/.
 
-Since this is a Node.js application that has Node.js dependencies, run `npm install` as well.
-
+### FFmpeg
 raspi-live uses FFmpeg, a video conversion command-line utility, to process the streaming H.264 video that the Raspberry Pi camera module outputs. Here's how to install it on your Raspberry Pi:
 
 1. Download and configure FFmpeg via:
 ```
-git clone https://github.com/FFmpeg/FFmpeg.git
-cd FFmpeg
+sudo apt-get install libomxil-bellagio-dev
+wget -O ffmpeg.tar.bz2 https://ffmpeg.org/releases/ffmpeg-snapshot-git.tar.bz2
+tar xvjf ffmpeg.tar.bz2
+cd ffmpeg
 sudo ./configure --arch=armel --target-os=linux --enable-gpl --enable-omx --enable-omx-rpi --enable-nonfree
 ```
 2. If you're working with a Raspbery Pi 2 or 3, then run `sudo make -j4` to build FFmpeg. If you're working with a Raspberry Pi Zero, then run `sudo make`.
 3. Install FFmpeg via `sudo make install` regardless of the model of your Raspberry Pi.
-4. Delete the FFmpeg directory that was created during the git clone process in Step 1. FFmpeg has already been installed and the directory is no longer needed.
+4. Delete the FFmpeg directory and tar file that were created during the download process in Step 1. FFmpeg has been installed so they are no longer needed.
+
+### CLI
+Install it globally:
+```
+npm install raspi-live -g
+raspi-live --help
+```
+Or use npx:
+```
+npx raspi-live --help
+```
 
 ## Video Stream Playback
-raspi-live is only concerned with streaming video from the camera module and does not offer a playback solution. Some browsers [support HLS natively](https://developer.mozilla.org/en-US/Apps/Fundamentals/Audio_and_video_delivery/Live_streaming_web_audio_and_video#HLS) and others support it through JavaScript and [MSE](https://en.wikipedia.org/wiki/Media_Source_Extensions). If you're looking for a place to start, [hls.js](https://github.com/video-dev/hls.js) is a good option.
+raspi-live is only concerned with streaming video from the camera module and does not offer a playback solution.
 
-## Why HLS instead of MPEG DASH?
-While MPEG DASH is a more open standard for streaming video over the internet, HLS is more widely adopted and supported. FFmpeg, chosen for its near-ubiquitousness in the video processing space, technically supports both formats but to varying degrees. The MPEG DASH format is not listed in the [FFmpeg format documentation](https://www.ffmpeg.org/ffmpeg-formats.html) and there are minor performance issues in terms of framerate drops and and degraded image quality with FFmpeg's implementation. While these performance issues can likely be configured away with more advanced options, HLS is simply easier to implement out of the box.
+Some browsers [support HLS natively](https://developer.mozilla.org/en-US/Apps/Fundamentals/Audio_and_video_delivery/Live_streaming_web_audio_and_video#HLS) and others support it through JavaScript and [MSE](https://en.wikipedia.org/wiki/Media_Source_Extensions).
+
+[MPEG-DASH](https://developer.mozilla.org/en-US/docs/Web/Apps/Fundamentals/Audio_and_video_delivery/Live_streaming_web_audio_and_video#MPEG-DASH) is not supported by browsers natively but playback can be accomplished through JavaScript and MSE.

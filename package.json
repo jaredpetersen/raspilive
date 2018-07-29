@@ -1,14 +1,21 @@
 {
-  "name": "raspi-security-cam",
+  "name": "raspi-live",
   "version": "0.0.1",
-  "description": "Stream video from the raspberry pi to the web",
-  "main": "server.js",
+  "description": "Self-contained raspberry pi video streaming server",
+  "main": "cli.js",
   "scripts": {
+    "start": "node cli.js",
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "cli0": "./cli0.js",
+    "raspi-live": "./cli.js"
   },
   "author": "Jared Petersen <jaredtoddpetersen@gmail.com> (https://github.com/jaredpetersen/)",
   "license": "MIT",
   "dependencies": {
+    "commander": "^2.16.0",
+    "compression": "^1.7.3",
     "cors": "^2.8.4",
     "express": "^4.15.2",
     "fluent-ffmpeg": "^2.1.0"
