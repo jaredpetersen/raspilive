@@ -42,7 +42,7 @@ Start streaming video from the raspberry pi camera module.
 ###### -d, --directory
 The specified directory will be used to host the streaming video files. Those concerned about the long-term health of their pi's SD card may opt to point raspi-live to a RAMDisk so that the files are only stored in memory. However, this also means that you will be unable to recover any of the footage if the power is cut.
 
-Defaults to `/srv/camera`.
+Defaults to `/home/<USERNAME>/camera`.
 
 ###### -f, --format
 * [`hls`](https://en.wikipedia.org/wiki/HTTP_Live_Streaming) (default)
