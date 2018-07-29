@@ -22,9 +22,12 @@ program
   .description('start streaming video from the raspberry pi camera module')
   .option('-d, --directory <directory>', 'streaming video file hosting location', `${os.homedir()}/camera`)
   .option('-f, --format <format>', 'video streaming format [hls, dash]', /^(hls|dash)$/i, 'hls')
+  .option('-l, --list-size <list-size>', 'number of streaming files in the playlist', int, 10)
+  .option('-s, --storage-size <storage-size>', 'number of streaming files for storage purposes', int, 10)
   .option('-p, --port <port>', 'port number the server runs on', int, 8080)
-  .action(({ directory, format, port }) => {
-    server(directory, format, port);
+  .action(({ directory, format, listSize, storageSize, port }) => {
+    console.log(directory, format, listSize, storageSize, port);
+    server(directory, format, listSize, storageSize, port);
   });
 
 program.parse(process.argv);

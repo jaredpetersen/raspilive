@@ -48,6 +48,16 @@ Defaults to `/home/<USERNAME>/camera` but `/srv/camera` is recommended as raspi-
 * [`hls`](https://en.wikipedia.org/wiki/HTTP_Live_Streaming) (default)
 * [`dash`](https://en.wikipedia.org/wiki/Dynamic_Adaptive_Streaming_over_HTTP)
 
+###### -l, --list-size
+The number of streaming video files to include in the playlist.
+
+Defaults to `10`.
+
+###### -s, --storage-size
+The number of stream video files to store after they cycle out of the playlist. This is useful in cases where you want to look at previously recorded footage. To have a full, 24-hour cycle of recorded video, specify `43200` (each file is 2 seconds long and there are 86400 seconds in a day).
+
+Defaults to `10`.
+
 ###### -p, --port
 Port number the server runs on. Defaults to `8080`.
 
