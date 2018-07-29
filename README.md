@@ -54,12 +54,14 @@ The number of streaming video files included in the playlist.
 Defaults to `10`.
 
 ###### -s, --storage-size
-The number of stream video files stored after they cycle out of the playlist. This is useful in cases where you want to look at previously recorded footage. To have a full, 24-hour cycle of recorded video, specify `43200` (each file is 2 seconds long and there are 86400 seconds in a day).
+The number of streaming video files stored after they cycle out of the playlist. This is useful in cases where you want to look at previously recorded footage. The streaming video files are 2 seconds long so to have a 24-hour cycle of recorded video, specify `43200` (make sure to have enough storage space).
 
 Defaults to `10`.
 
 ###### -p, --port
-Port number the server runs on. Defaults to `8080`.
+Port number the server runs on.
+
+Defaults to `8080`.
 
 
 ## Install
