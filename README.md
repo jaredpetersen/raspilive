@@ -40,7 +40,7 @@ Start streaming video from the raspberry pi camera module.
 
 ##### Options
 ###### -d, --directory
-The specified directory will be used to host the streaming video files. Those concerned about the long-term health of their pi's SD card may opt to point raspi-live to a RAMDisk so that the files are only stored in memory. However, this also means that you will be unable to recover any of the footage if the power is cut.
+The directory used to host the streaming video files. Those concerned about the long-term health of their pi's SD card may opt to point raspi-live to a RAMDisk so that the files are only stored in memory. However, this also means that you will be unable to recover any of the footage if the power is cut.
 
 Defaults to `/home/<USERNAME>/camera` but `/srv/camera` is recommended as raspi-live is a server.
 
@@ -49,12 +49,12 @@ Defaults to `/home/<USERNAME>/camera` but `/srv/camera` is recommended as raspi-
 * [`dash`](https://en.wikipedia.org/wiki/Dynamic_Adaptive_Streaming_over_HTTP)
 
 ###### -l, --list-size
-The number of streaming video files to include in the playlist.
+The number of streaming video files included in the playlist.
 
 Defaults to `10`.
 
 ###### -s, --storage-size
-The number of stream video files to store after they cycle out of the playlist. This is useful in cases where you want to look at previously recorded footage. To have a full, 24-hour cycle of recorded video, specify `43200` (each file is 2 seconds long and there are 86400 seconds in a day).
+The number of stream video files stored after they cycle out of the playlist. This is useful in cases where you want to look at previously recorded footage. To have a full, 24-hour cycle of recorded video, specify `43200` (each file is 2 seconds long and there are 86400 seconds in a day).
 
 Defaults to `10`.
 
