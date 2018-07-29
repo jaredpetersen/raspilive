@@ -6,20 +6,25 @@ Run it via a simple command line interface:
 raspi-live start
 ```
 
+The server will start serving the streaming files on `/camera`. Point streaming video players to `/camera/livestream.m3u8` for HLS or `/camera/livestream.mpd`
+
+
 ## Usage
 ```
 $ raspi-live --help
 
   Usage: raspi-live [options] [command]
 
-    Options:
+  self-contained raspberry pi video streaming server
 
-      -v, --version                         output the version number
-      -h, --help                            output usage information
+  Options:
 
-    Commands:
+    -v, --version    output the version number
+    -h, --help       output usage information
 
-      start [options] <directory> <format>  start the raspberry pi live-streaming server
+  Commands:
+
+    start [options]  start streaming video from the raspberry pi camera module
 ```
 
 ### Options
@@ -31,7 +36,7 @@ Output information on how to use the command line interface.
 
 ### Commands
 #### start \[options\]
-Start the raspberry pi live-streaming server from the specified directory and using the specified format.
+Start streaming video from the raspberry pi camera module.
 
 ##### Options
 ###### -d, --directory
@@ -77,9 +82,8 @@ Or use npx:
 npx raspi-live --help
 ```
 
+
 ## Video Stream Playback
 raspi-live is only concerned with streaming video from the camera module and does not offer a playback solution.
 
-Some browsers [support HLS natively](https://developer.mozilla.org/en-US/Apps/Fundamentals/Audio_and_video_delivery/Live_streaming_web_audio_and_video#HLS) and others support it through JavaScript and [MSE](https://en.wikipedia.org/wiki/Media_Source_Extensions).
-
-[MPEG-DASH](https://developer.mozilla.org/en-US/docs/Web/Apps/Fundamentals/Audio_and_video_delivery/Live_streaming_web_audio_and_video#MPEG-DASH) is not supported by browsers natively but playback can be accomplished through JavaScript and MSE.
+Browser support between the different streaming formats varies so in most cases a JavaScript playback library will be necessary. For more information on this, check out [Mozilla's article on the subject](https://developer.mozilla.org/en-US/docs/Web/Apps/Fundamentals/Audio_and_video_delivery/Live_streaming_web_audio_and_video).

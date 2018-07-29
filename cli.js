@@ -17,7 +17,7 @@ program
 
 program
   .command('start')
-  .description('start the raspberry pi live-streaming server')
+  .description('start streaming video from the raspberry pi camera module')
   .option('-d, --directory <directory>', 'streaming video file hosting location', '/srv/camera')
   .option('-f, --format [format]', 'video streaming format [hls, mpeg-dash]', /^(hls|mpeg-dash)$/i, 'hls')
   .option('-p, --port <port>', 'port number the server runs on', int, 8080)

@@ -1,7 +1,7 @@
 {
   "name": "raspi-live",
   "version": "0.0.1",
-  "description": "Self-contained raspberry pi video streaming server",
+  "description": "self-contained raspberry pi video streaming server",
   "main": "cli.js",
   "scripts": {
     "start": "node cli.js",
@@ -13,6 +13,7 @@
   },
   "author": "Jared Petersen <jaredtoddpetersen@gmail.com> (https://github.com/jaredpetersen/)",
   "license": "MIT",
+  "repository": "github:jaredpetersen/raspi-live",
   "dependencies": {
     "commander": "^2.16.0",
     "compression": "^1.7.3",
