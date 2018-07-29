@@ -1,12 +1,12 @@
 # raspi-live
-raspi-live is a Node.js Express webserver that takes streaming video from the Raspberry Pi Camera module and makes it available on the web via [HLS](https://en.wikipedia.org/wiki/HTTP_Live_Streaming) or [MPEG-DASH](https://en.wikipedia.org/wiki/Dynamic_Adaptive_Streaming_over_HTTP).
+raspi-live is a Node.js Express webserver that takes streaming video from the Raspberry Pi Camera module and makes it available on the web via [HLS](https://en.wikipedia.org/wiki/HTTP_Live_Streaming) or [DASH](https://en.wikipedia.org/wiki/Dynamic_Adaptive_Streaming_over_HTTP).
 
 Run it via a simple command line interface:
 ```
 raspi-live start
 ```
 
-The server will start serving the streaming files on `/camera`. Point streaming video players to `/camera/livestream.m3u8` for HLS or `/camera/livestream.mpd`
+The server will start serving the streaming files on `/camera`. Point streaming video players to `/camera/livestream.m3u8` for HLS or `/camera/livestream.mpd` for DASH.
 
 
 ## Usage
@@ -42,11 +42,11 @@ Start streaming video from the raspberry pi camera module.
 ###### -d, --directory
 The specified directory will be used to host the streaming video files. Those concerned about the long-term health of their pi's SD card may opt to point raspi-live to a RAMDisk so that the files are only stored in memory. However, this also means that you will be unable to recover any of the footage if the power is cut.
 
-Defaults to `/home/<USERNAME>/camera`.
+Defaults to `/home/<USERNAME>/camera` but `/srv/camera` is recommended as raspi-live is a server.
 
 ###### -f, --format
 * [`hls`](https://en.wikipedia.org/wiki/HTTP_Live_Streaming) (default)
-* [`mpeg-dash`](https://en.wikipedia.org/wiki/Dynamic_Adaptive_Streaming_over_HTTP)
+* [`dash`](https://en.wikipedia.org/wiki/Dynamic_Adaptive_Streaming_over_HTTP)
 
 ###### -p, --port
 Port number the server runs on. Defaults to `8080`.
