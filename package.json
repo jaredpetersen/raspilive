@@ -1,6 +1,6 @@
 {
   "name": "raspi-live",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "self-contained raspberry pi video streaming server",
   "main": "cli.js",
   "scripts": {
