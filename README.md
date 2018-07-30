@@ -1,4 +1,6 @@
 # raspi-live
+[![NPM](https://img.shields.io/npm/v/raspi-live.svg)](https://www.npmjs.com/package/raspi-live)
+
 raspi-live is a Node.js Express webserver that takes streaming video from the Raspberry Pi Camera module and makes it available on the web via [HLS](https://en.wikipedia.org/wiki/HTTP_Live_Streaming) or [DASH](https://en.wikipedia.org/wiki/Dynamic_Adaptive_Streaming_over_HTTP).
 
 Run it via a simple command line interface:
