@@ -25,14 +25,14 @@ program
   .option('-w, --width <width>', 'video width', int, 1280)
   .option('-h, --height <height>', 'video height', int, 720)
   .option('-r, --framerate <fps>', 'video frames per second', int, 30)
-  .option('-x, --horizontal-flip', 'flip the camera horizontally', false)
-  .option('-y, --vertical-flip', 'flip the camera vertically', false)
+  .option('-x, --horizontal-flip', 'flip the camera horizontally')
+  .option('-y, --vertical-flip', 'flip the camera vertically')
   .option('-l, --list-size <list-size>', 'number of streaming files in the playlist', int, 10)
   .option('-s, --storage-size <storage-size>', 'number of streaming files for storage purposes', int, 10)
   .option('-p, --port <port>', 'port number the server runs on', int, 8080)
-  .action(({ directory, format, width, height, fps, horizontalFlip, verticalFlip, listSize, storageSize, port }) => {
-    console.log('configuration:', directory, format, width, height, fps, horizontalFlip, verticalFlip, listSize, storageSize, port);
-    server(directory, format, width, height, fps, horizontalFlip, verticalFlip, listSize, storageSize, port);
+  .action(({ directory, format, width, height, framerate, horizontalFlip, verticalFlip, listSize, storageSize, port }) => {
+    console.log('configuration:', directory, format, width, height, framerate, horizontalFlip, verticalFlip, listSize, storageSize, port);
+    server(directory, format, width, height, framerate, horizontalFlip, verticalFlip, listSize, storageSize, port);
   });
 
 program.parse(process.argv);
