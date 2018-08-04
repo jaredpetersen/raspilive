@@ -10,6 +10,12 @@ const server = require('./lib/server');
 // Coercion function for integers
 const int = (value) => parseInt(value, 10);
 
+// Coercion function for integer range
+const range = (min, max, value, def) => {
+  if (value < min || value > max) return def;
+  return parseInt(value, 10);
+};
+
 process.title = 'raspi-live';
 
 program
@@ -27,14 +33,11 @@ program
   .option('-r, --framerate <fps>', 'video frames per second', int, 25)
   .option('-x, --horizontal-flip', 'flip the camera horizontally')
   .option('-y, --vertical-flip', 'flip the camera vertically')
-  .option('-c, --compression-level', 'compression level [0-9]', /^([0-9])$/, '9')
+  .option('-c, --compression-level <compression-level>', 'compression level [0-9]', range.bind(null, 0, 9), 9)
   .option('-l, --list-size <list-size>', 'number of streaming files in the playlist', int, 10)
   .option('-s, --storage-size <storage-size>', 'number of streaming files for storage purposes', int, 10)
   .option('-p, --port <port>', 'port number the server runs on', int, 8080)
   .action(({ directory, format, width, height, framerate, horizontalFlip = false, verticalFlip = false, compressionLevel, listSize, storageSize, port }) => {
-    // Convert compression level to an int, since we had to make it a string for the purposes of validation
-    const compressionLevelInt = int(compressionLevel);
-
     console.log('configuration:', directory, format, width, height, framerate, horizontalFlip, verticalFlip, compressionLevel, listSize, storageSize, port);
     server(directory, format, width, height, framerate, horizontalFlip, verticalFlip, compressionLevelInt, listSize, storageSize, port);
   });
