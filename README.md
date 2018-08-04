@@ -50,6 +50,36 @@ Defaults to `/home/<USERNAME>/camera` but `/srv/camera` is recommended as raspi-
 * [`hls`](https://en.wikipedia.org/wiki/HTTP_Live_Streaming) (default)
 * [`dash`](https://en.wikipedia.org/wiki/Dynamic_Adaptive_Streaming_over_HTTP)
 
+###### -w, --width
+Video resolution width.
+
+Defaults to `1280`.
+
+###### -h, --height
+Video resolution height.
+
+Defaults to `720`.
+
+###### -r, --framerate
+Number of video frames per second.
+
+Defaults to `25`.
+
+###### -x, --horizontal-flip
+Flip the video horizontally.
+
+Disabled by default.
+
+###### -y, --vertical-flip
+Flip the video vertically.
+
+Disabled by default.
+
+###### -c, --compression-level
+Level the video is compressed for download via the internet. Value must be between `0` and `9`.
+
+Defaults to `9`.
+
 ###### -l, --list-size
 The number of streaming video files included in the playlist.
 
