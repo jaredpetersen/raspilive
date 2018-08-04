@@ -24,7 +24,7 @@ program
   .option('-f, --format <format>', 'video streaming format [hls, dash]', /^(hls|dash)$/i, 'hls')
   .option('-w, --width <width>', 'video width', int, 1280)
   .option('-h, --height <height>', 'video height', int, 720)
-  .option('-r, --framerate <fps>', 'video frames per second', int, 30)
+  .option('-r, --framerate <fps>', 'video frames per second', int, 25)
   .option('-x, --horizontal-flip', 'flip the camera horizontally')
   .option('-y, --vertical-flip', 'flip the camera vertically')
   .option('-l, --list-size <list-size>', 'number of streaming files in the playlist', int, 10)
