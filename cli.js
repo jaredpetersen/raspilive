@@ -39,7 +39,7 @@ program
   .option('-p, --port <port>', 'port number the server runs on', int, 8080)
   .action(({ directory, format, width, height, framerate, horizontalFlip = false, verticalFlip = false, compressionLevel, listSize, storageSize, port }) => {
     console.log('configuration:', directory, format, width, height, framerate, horizontalFlip, verticalFlip, compressionLevel, listSize, storageSize, port);
-    server(directory, format, width, height, framerate, horizontalFlip, verticalFlip, compressionLevelInt, listSize, storageSize, port);
+    server(directory, format, width, height, framerate, horizontalFlip, verticalFlip, compressionLevel, listSize, storageSize, port);
   });
 
 program.parse(process.argv);
