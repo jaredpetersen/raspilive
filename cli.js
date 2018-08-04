@@ -30,7 +30,7 @@ program
   .option('-l, --list-size <list-size>', 'number of streaming files in the playlist', int, 10)
   .option('-s, --storage-size <storage-size>', 'number of streaming files for storage purposes', int, 10)
   .option('-p, --port <port>', 'port number the server runs on', int, 8080)
-  .action(({ directory, format, width, height, framerate, horizontalFlip, verticalFlip, listSize, storageSize, port }) => {
+  .action(({ directory, format, width, height, framerate, horizontalFlip = false, verticalFlip = false, listSize, storageSize, port }) => {
     console.log('configuration:', directory, format, width, height, framerate, horizontalFlip, verticalFlip, listSize, storageSize, port);
     server(directory, format, width, height, framerate, horizontalFlip, verticalFlip, listSize, storageSize, port);
   });
