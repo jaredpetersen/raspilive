@@ -80,6 +80,11 @@ Level the video is compressed for download via the internet. Value must be betwe
 
 Defaults to `9`.
 
+###### -t, --time
+The duration of the streaming video file in seconds.
+
+Defaults to `2`.
+
 ###### -l, --list-size
 The number of streaming video files included in the playlist.
 
