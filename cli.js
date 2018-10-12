@@ -34,12 +34,13 @@ program
   .option('-x, --horizontal-flip', 'flip the camera horizontally')
   .option('-y, --vertical-flip', 'flip the camera vertically')
   .option('-c, --compression-level <compression-level>', 'compression level [0-9]', range.bind(null, 0, 9), 9)
+  .option('-t, --time <time>', 'duration of streaming files', int, 2)
   .option('-l, --list-size <list-size>', 'number of streaming files in the playlist', int, 10)
   .option('-s, --storage-size <storage-size>', 'number of streaming files for storage purposes', int, 10)
   .option('-p, --port <port>', 'port number the server runs on', int, 8080)
   .action(({ directory, format, width, height, framerate, horizontalFlip = false, verticalFlip = false, compressionLevel, listSize, storageSize, port }) => {
-    console.log('configuration:', directory, format, width, height, framerate, horizontalFlip, verticalFlip, compressionLevel, listSize, storageSize, port);
-    server(directory, format, width, height, framerate, horizontalFlip, verticalFlip, compressionLevel, listSize, storageSize, port);
+    console.log('configuration:', directory, format, width, height, framerate, horizontalFlip, verticalFlip, compressionLevel, time, listSize, storageSize, port);
+    server(directory, format, width, height, framerate, horizontalFlip, verticalFlip, compressionLevel, time, listSize, storageSize, port);
   });
 
 program.parse(process.argv);
