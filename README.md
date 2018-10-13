@@ -106,7 +106,7 @@ Defaults to `8080`.
 raspi-live only supports streaming video from the Raspberry Pi camera module. Here's a the official documentation on how to connect and configure it: https://www.raspberrypi.org/documentation/usage/camera/.
 
 ### FFmpeg
-raspi-live uses FFmpeg, a video conversion command-line utility, to process the streaming H.264 video that the Raspberry Pi camera module outputs. Here's how to install it on your Raspberry Pi:
+raspi-live uses FFmpeg, a video conversion command-line utility, to process the streaming H.264 video that the Raspberry Pi camera module outputs. Version 4.0 or higher is required. Here's how to install it on your Raspberry Pi:
 
 1. Download and configure FFmpeg via:
 ```
