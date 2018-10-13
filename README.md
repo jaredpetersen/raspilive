@@ -14,19 +14,16 @@ The server will start serving the streaming files on `/camera`. Point streaming 
 ## Usage
 ```
 $ raspi-live --help
+Usage: raspi-live [options] [command]
 
-  Usage: raspi-live [options] [command]
+self-contained raspberry pi video streaming server
 
-  self-contained raspberry pi video streaming server
+Options:
+  -v, --version    output the version number
+  -h, --help       output usage information
 
-  Options:
-
-    -v, --version    output the version number
-    -h, --help       output usage information
-
-  Commands:
-
-    start [options]  start streaming video from the raspberry pi camera module
+Commands:
+  start [options]  start streaming video from the raspberry pi camera module
 ```
 
 ### Options
