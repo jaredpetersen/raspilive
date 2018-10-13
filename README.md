@@ -14,19 +14,16 @@ The server will start serving the streaming files on `/camera`. Point streaming 
 ## Usage
 ```
 $ raspi-live --help
+Usage: raspi-live [options] [command]
 
-  Usage: raspi-live [options] [command]
+self-contained raspberry pi video streaming server
 
-  self-contained raspberry pi video streaming server
+Options:
+  -v, --version    output the version number
+  -h, --help       output usage information
 
-  Options:
-
-    -v, --version    output the version number
-    -h, --help       output usage information
-
-  Commands:
-
-    start [options]  start streaming video from the raspberry pi camera module
+Commands:
+  start [options]  start streaming video from the raspberry pi camera module
 ```
 
 ### Options
@@ -80,13 +77,18 @@ Level the video is compressed for download via the internet. Value must be betwe
 
 Defaults to `9`.
 
+###### -t, --time
+The duration of the streaming video file in seconds.
+
+Defaults to `2`.
+
 ###### -l, --list-size
 The number of streaming video files included in the playlist.
 
 Defaults to `10`.
 
 ###### -s, --storage-size
-The number of streaming video files stored after they cycle out of the playlist. This is useful in cases where you want to look at previously recorded footage. The streaming video files are 2 seconds long so to have a 24-hour cycle of recorded video, specify `43200` (make sure to have enough storage space).
+The number of streaming video files stored after they cycle out of the playlist. This is useful in cases where you want to look at previously recorded footage. The streaming video files are 2 seconds long by default so to have a 24-hour cycle of recorded video, specify `43200` (make sure to have enough storage space).
 
 Defaults to `10`.
 
@@ -101,7 +103,7 @@ Defaults to `8080`.
 raspi-live only supports streaming video from the Raspberry Pi camera module. Here's a the official documentation on how to connect and configure it: https://www.raspberrypi.org/documentation/usage/camera/.
 
 ### FFmpeg
-raspi-live uses FFmpeg, a video conversion command-line utility, to process the streaming H.264 video that the Raspberry Pi camera module outputs. Here's how to install it on your Raspberry Pi:
+raspi-live uses FFmpeg, a video conversion command-line utility, to process the streaming H.264 video that the Raspberry Pi camera module outputs. Version 4.0 or higher is required. Here's how to install it on your Raspberry Pi:
 
 1. Download and configure FFmpeg via:
 ```
@@ -131,3 +133,7 @@ npx raspi-live --help
 raspi-live is only concerned with streaming video from the camera module and does not offer a playback solution.
 
 Browser support between the different streaming formats varies so in most cases a JavaScript playback library will be necessary. For more information on this, check out [Mozilla's article on the subject](https://developer.mozilla.org/en-US/docs/Web/Apps/Fundamentals/Audio_and_video_delivery/Live_streaming_web_audio_and_video).
+
+
+## Performance
+HLS and DASH inherently have latency baked into the technology. To reduce this, set the `time` option to 1 or .5 seconds and increase the list and storage size via the `list-size` and `storage-size` options. Ideally, there should be 12 seconds of video in the list and 50 seconds of video in storage.
