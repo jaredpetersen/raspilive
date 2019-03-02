@@ -111,7 +111,7 @@ sudo apt-get install libomxil-bellagio-dev
 wget -O ffmpeg.tar.bz2 https://ffmpeg.org/releases/ffmpeg-snapshot-git.tar.bz2
 tar xvjf ffmpeg.tar.bz2
 cd ffmpeg
-sudo ./configure --arch=armel --target-os=linux --enable-gpl --enable-omx --enable-omx-rpi --enable-nonfree
+sudo ./configure --arch=$(dpkg --print-architecture) --target-os=linux --enable-gpl --enable-omx --enable-omx-rpi --enable-nonfree
 ```
 2. If you're working with a Raspbery Pi 2 or 3, then run `sudo make -j4` to build FFmpeg. If you're working with a Raspberry Pi Zero, then run `sudo make`.
 3. Install FFmpeg via `sudo make install` regardless of the model of your Raspberry Pi.
