@@ -113,7 +113,7 @@ tar xvjf ffmpeg.tar.bz2
 cd ffmpeg
 sudo ./configure --arch=$(lscpu | grep "Architecture:" | awk '{ print $2; }') --target-os=linux --enable-gpl --enable-omx --enable-omx-rpi --enable-nonfree
 ```
-2. If you're working with a Raspbery Pi 2 or 3, then run `sudo make -j4` to build FFmpeg. If you're working with a Raspberry Pi Zero, then run `sudo make`.
+2. Now, run `sudo make -j$(grep -c ^processor /proc/cpuinfo)` to build FFmpeg and get a cup of coffee or two. This will take a while.
 3. Install FFmpeg via `sudo make install` regardless of the model of your Raspberry Pi.
 4. Delete the FFmpeg directory and tar file that were created during the download process in Step 1. FFmpeg has been installed so they are no longer needed.
 
