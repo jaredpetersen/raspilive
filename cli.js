@@ -23,6 +23,7 @@ program
 program
   .command('start')
   .description('start streaming video from the raspberry pi camera module')
+  .option('-n, --nopreview', 'Removes the preview screen')
   .option('-d, --directory <directory>', 'streaming video file hosting location', `${os.homedir()}/camera`)
   .option('-f, --format <format>', 'video streaming format [hls, dash]', /^(hls|dash)$/i, 'hls')
   .option('-w, --width <width>', 'video resolution width', Number, 1280)
