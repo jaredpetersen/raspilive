@@ -110,6 +110,7 @@ make ffmpeg
 make clean
 ```
 make clean will delete the FFmpeg directory and tar file that were created during the download process.
+
 2. Download and configure FFmpeg manually via:
 ```
 sudo apt-get install libomxil-bellagio-dev
