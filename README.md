@@ -104,8 +104,13 @@ raspi-live only supports streaming video from the Raspberry Pi camera module. He
 
 ### FFmpeg
 raspi-live uses FFmpeg, a video conversion command-line utility, to process the streaming H.264 video that the Raspberry Pi camera module outputs. Version 4.0 or higher is required. Here's how to install it on your Raspberry Pi:
-
 1. Download and configure FFmpeg via:
+```
+make ffmpeg
+make clean
+```
+make clean will delete the FFmpeg directory and tar file that were created during the download process.
+2. Download and configure FFmpeg manually via:
 ```
 sudo apt-get install libomxil-bellagio-dev
 wget -O ffmpeg.tar.bz2 https://ffmpeg.org/releases/ffmpeg-snapshot-git.tar.bz2
