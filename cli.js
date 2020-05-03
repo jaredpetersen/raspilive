@@ -40,6 +40,5 @@ program
     server(directory, format, width, height, framerate, horizontalFlip, verticalFlip, compressionLevel, time, listSize, storageSize, port);
   });
 
+program.helpOption('--help');
 program.parse(process.argv);
-
-if (!program.args.length) program.help();
