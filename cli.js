@@ -35,9 +35,12 @@ program
   .option('-l, --list-size <list-size>', 'number of streaming files in the playlist', Number, 10)
   .option('-s, --storage-size <storage-size>', 'number of streaming files for storage purposes', Number, 10)
   .option('-p, --port <port>', 'port number the server runs on', Number, 8080)
-  .action(({ directory, format, width, height, framerate, horizontalFlip = false, verticalFlip = false, compressionLevel, time, listSize, storageSize, port }) => {
-    console.log('configuration:', directory, format, width, height, framerate, horizontalFlip, verticalFlip, compressionLevel, time, listSize, storageSize, port);
-    server(directory, format, width, height, framerate, horizontalFlip, verticalFlip, compressionLevel, time, listSize, storageSize, port);
+  .option('-S, --secure', 'run with credentials for HTTPS')
+  .option('-C, --certificate <file>', 'path to SSL certificate', '')
+  .option('-K, --key <file>', 'path to private key', '')
+  .action(({ directory, format, width, height, framerate, horizontalFlip = false, verticalFlip = false, compressionLevel, time, listSize, storageSize, port, secure = false, certificate, key}) => {
+    console.log('configuration:', directory, format, width, height, framerate, horizontalFlip, verticalFlip, compressionLevel, time, listSize, storageSize, port, secure, certificate, key);
+    server(directory, format, width, height, framerate, horizontalFlip, verticalFlip, compressionLevel, time, listSize, storageSize, port, secure, certificate, key);
   });
 
 program.helpOption('--help');
