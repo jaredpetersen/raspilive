@@ -97,6 +97,17 @@ Port number the server runs on.
 
 Defaults to `8080`.
 
+###### -S, --secure
+Specify that express should serve over HTTPS.
+
+Disabled by default.
+
+###### -C, --certificatePath
+SSL Certificate Chain path for express server.
+
+###### -K, --keyPath
+SSL Private Key path for certificate Chain.
+
 
 ## Install
 ### Raspberry Pi Camera module
