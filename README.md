@@ -98,15 +98,15 @@ Port number the server runs on.
 Defaults to `8080`.
 
 ###### -S, --secure
-Specify that express should serve over HTTPS.
+Specify to serve over HTTPS.
 
 Disabled by default.
 
 ###### -C, --certificatePath
-SSL Certificate Chain path for express server.
+SSL certificate chain for the server.
 
 ###### -K, --keyPath
-SSL Private Key path for certificate Chain.
+SSL private key path for the certificate chain.
 
 
 ## Install
