@@ -38,9 +38,9 @@ program
   .option('-S, --secure', 'run with credentials for HTTPS')
   .option('-C, --certificate <file>', 'path to SSL certificate', '')
   .option('-K, --key <file>', 'path to private key', '')
-  .action(({ directory, format, width, height, framerate, horizontalFlip = false, verticalFlip = false, compressionLevel, time, listSize, storageSize, port, secure = false, certificatePath, keyPath}) => {
-    console.log('configuration:', directory, format, width, height, framerate, horizontalFlip, verticalFlip, compressionLevel, time, listSize, storageSize, port, secure, certificatePath, keyPath);
-    server(directory, format, width, height, framerate, horizontalFlip, verticalFlip, compressionLevel, time, listSize, storageSize, port, secure, certificatePath, keyPath);
+  .action(({ directory, format, width, height, framerate, horizontalFlip = false, verticalFlip = false, compressionLevel, time, listSize, storageSize, port, secure = false, certificate, key}) => {
+    console.log('configuration:', directory, format, width, height, framerate, horizontalFlip, verticalFlip, compressionLevel, time, listSize, storageSize, port, secure, certificate, key);
+    server(directory, format, width, height, framerate, horizontalFlip, verticalFlip, compressionLevel, time, listSize, storageSize, port, secure, certificate, key);
   });
 
 program.helpOption('--help');

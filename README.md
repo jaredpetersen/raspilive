@@ -97,6 +97,17 @@ Port number the server runs on.
 
 Defaults to `8080`.
 
+###### -S, --secure
+Specify to serve over HTTPS.
+
+Disabled by default.
+
+###### -C, --certificate
+SSL certificate chain for the server.
+
+###### -K, --key
+SSL private key path for the certificate chain.
+
 
 ## Install
 ### Raspberry Pi Camera module
