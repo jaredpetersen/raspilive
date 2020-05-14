@@ -102,10 +102,10 @@ Specify to serve over HTTPS.
 
 Disabled by default.
 
-###### -C, --certificatePath
+###### -C, --certificate
 SSL certificate chain for the server.
 
-###### -K, --keyPath
+###### -K, --key
 SSL private key path for the certificate chain.
 
 
