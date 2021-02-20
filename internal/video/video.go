@@ -11,6 +11,8 @@ import (
 	"github.com/jaredpetersen/raspilive/internal/utils/pointer"
 )
 
+const directory = "./camera"
+
 // ServeHls starts a static file server and stream video from the Raspberry Pi camera module using the HLS format.
 //
 // This is a blocking operation.
@@ -55,7 +57,7 @@ func streamHls() {
 
 	// Pipe video stream from raspivid into ffmpeg
 	raspivid := raspivid.Stream(raspivid.Options{Width: 0})
-	ffmpeg := hls.Hls(raspivid.Video, "./camera", hls.Options{Time: pointer.ToInt(0)})
+	ffmpeg := hls.Hls(raspivid.Video, directory, hls.Options{Time: pointer.ToInt(0)})
 
 	// Start ffmpeg first so that it's ready to accept the stream
 	ffmpeg.Start()
@@ -72,7 +74,7 @@ func streamMpegDash() {
 
 	// Pipe video stream from raspivid into ffmpeg
 	raspivid := raspivid.Stream(raspivid.Options{Width: 0})
-	ffmpeg := mpegdash.MpegDash(raspivid.Video, "./camera", mpegdash.Options{Time: pointer.ToInt(0)})
+	ffmpeg := mpegdash.MpegDash(raspivid.Video, directory, mpegdash.Options{Time: pointer.ToInt(0)})
 
 	// Start ffmpeg first so that it's ready to accept the stream
 	ffmpeg.Start()
@@ -85,8 +87,8 @@ func streamMpegDash() {
 //
 // This is a blocking operation.
 func serveFiles() {
-	fs := http.FileServer(http.Dir("./camera"))
-	http.Handle("/", fs)
+	fs := http.FileServer(http.Dir(directory))
+	http.Handle("/camera", fs)
 
 	log.Println("Server started on port 8080")
 

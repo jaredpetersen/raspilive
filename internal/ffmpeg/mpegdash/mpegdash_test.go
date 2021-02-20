@@ -233,19 +233,19 @@ func TestStartAndWait(t *testing.T) {
 
 	dashMuxer := MpegDash(videoStream, directory, options)
 
-	startError := dashMuxer.Start()
+	err := dashMuxer.Start()
 
-	if startError != nil {
-		t.Error("Start encountered error", startError)
+	if err != nil {
+		t.Error("Start encountered error", err)
 	}
 	if dashMuxer.cmd.Process == nil {
 		t.Fatal("Start has not started a new process")
 	}
 
-	waitError := dashMuxer.Wait()
+	err = dashMuxer.Wait()
 
-	if waitError != nil {
-		t.Error("Start encountered error", startError)
+	if err != nil {
+		t.Error("Start encountered error", err)
 	}
 	if !dashMuxer.cmd.ProcessState.Exited() {
 		t.Error("Start execution is not complete")

@@ -251,19 +251,19 @@ func TestStartAndWait(t *testing.T) {
 
 	hlsMuxer := Hls(videoStream, directory, options)
 
-	startError := hlsMuxer.Start()
+	err := hlsMuxer.Start()
 
-	if startError != nil {
-		t.Error("Start encountered error", startError)
+	if err != nil {
+		t.Error("Start encountered error", err)
 	}
 	if hlsMuxer.cmd.Process == nil {
 		t.Fatal("Start has not started a new process")
 	}
 
-	waitError := hlsMuxer.Wait()
+	err = hlsMuxer.Wait()
 
-	if waitError != nil {
-		t.Error("Start encountered error", startError)
+	if err != nil {
+		t.Error("Start encountered error", err)
 	}
 	if !hlsMuxer.cmd.ProcessState.Exited() {
 		t.Error("Start execution is not complete")
