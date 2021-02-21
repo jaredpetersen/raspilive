@@ -8,8 +8,6 @@ import (
 	"strings"
 	"testing"
 	"time"
-
-	"github.com/jaredpetersen/raspilive/internal/utils/pointer"
 )
 
 const ffmpegSleep = 3 * time.Second
@@ -63,7 +61,7 @@ func TestHlsFps(t *testing.T) {
 
 	videoStream := ioutil.NopCloser(strings.NewReader("totallyfakevideostream"))
 	directory := "./camera"
-	options := Options{Fps: pointer.ToInt(30)}
+	options := Options{Fps: 30}
 
 	hlsMuxer := Hls(videoStream, directory, options)
 
@@ -97,7 +95,7 @@ func TestHlsTime(t *testing.T) {
 
 	videoStream := ioutil.NopCloser(strings.NewReader("totallyfakevideostream"))
 	directory := "./camera"
-	options := Options{Time: pointer.ToInt(4)}
+	options := Options{SegmentTime: 4}
 
 	hlsMuxer := Hls(videoStream, directory, options)
 
@@ -131,7 +129,7 @@ func TestHlsListSize(t *testing.T) {
 
 	videoStream := ioutil.NopCloser(strings.NewReader("totallyfakevideostream"))
 	directory := "./camera"
-	options := Options{ListSize: pointer.ToInt(60)}
+	options := Options{PlaylistSize: 60}
 
 	hlsMuxer := Hls(videoStream, directory, options)
 
@@ -166,7 +164,7 @@ func TestHlsStorageSize(t *testing.T) {
 
 	videoStream := ioutil.NopCloser(strings.NewReader("totallyfakevideostream"))
 	directory := "./camera"
-	options := Options{StorageSize: pointer.ToInt(240)}
+	options := Options{StorageSize: 240}
 
 	hlsMuxer := Hls(videoStream, directory, options)
 
@@ -201,10 +199,10 @@ func TestHlsAll(t *testing.T) {
 	videoStream := ioutil.NopCloser(strings.NewReader("totallyfakevideostream"))
 	directory := "./hls"
 	options := Options{
-		Fps:         pointer.ToInt(60),
-		Time:        pointer.ToInt(1),
-		ListSize:    pointer.ToInt(40),
-		StorageSize: pointer.ToInt(100),
+		Fps:          60,
+		SegmentTime:  1,
+		PlaylistSize: 40,
+		StorageSize:  100,
 	}
 
 	hlsMuxer := Hls(videoStream, directory, options)

@@ -19,10 +19,10 @@ type Muxer struct {
 //
 // Ffmpeg will step in and use its own defaults if a value is not provided.
 type Options struct {
-	Fps         *int // Framerate of the output video
-	Time        *int // Segment length target duration in seconds
-	ListSize    *int // Maximum number of playlist entries
-	StorageSize *int // Maximum number of unreferenced segments to keep on disk before removal
+	Fps          int // Framerate of the output video
+	SegmentTime  int // Segment length target duration in seconds
+	PlaylistSize int // Maximum number of playlist entries
+	StorageSize  int // Maximum number of unreferenced segments to keep on disk before removal
 }
 
 var execCommand = exec.Command
@@ -40,21 +40,21 @@ func Hls(inputStream io.ReadCloser, directory string, options Options) *Muxer {
 	}
 	hlsFlags := []string{"second_level_segment_index"}
 
-	if options.Fps != nil {
-		args = append(args, "-r", strconv.Itoa(*options.Fps))
+	if options.Fps != 0 {
+		args = append(args, "-r", strconv.Itoa(options.Fps))
 	}
 
-	if options.Time != nil {
-		args = append(args, "-hls_time", strconv.Itoa(*options.Time))
+	if options.SegmentTime != 0 {
+		args = append(args, "-hls_time", strconv.Itoa(options.SegmentTime))
 		hlsFlags = append(hlsFlags, "split_by_time")
 	}
 
-	if options.ListSize != nil {
-		args = append(args, "-hls_list_size", strconv.Itoa(*options.ListSize))
+	if options.PlaylistSize != 0 {
+		args = append(args, "-hls_list_size", strconv.Itoa(options.PlaylistSize))
 	}
 
-	if options.StorageSize != nil {
-		args = append(args, "-hls_delete_threshold", strconv.Itoa(*options.StorageSize))
+	if options.StorageSize != 0 {
+		args = append(args, "-hls_delete_threshold", strconv.Itoa(options.StorageSize))
 		hlsFlags = append(hlsFlags, "delete_segments")
 	}
 
