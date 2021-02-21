@@ -21,11 +21,13 @@ type Options struct {
 	VerticalFlip   bool
 }
 
+var execCommand = exec.Command
+
 // Stream prepares to start a video stream from raspivid using the Raspberry Pi camera module.
 //
 // Relies on the defaults of raspivid if an option value is not provided.
 func Stream(options Options) *Strm {
-	var args []string
+	args := []string{"-o", "-", "-t", "0"}
 
 	if options.Width != 0 {
 		args = append(args, "--width", strconv.Itoa(options.Width))
@@ -47,7 +49,7 @@ func Stream(options Options) *Strm {
 		args = append(args, "--vflip")
 	}
 
-	raspivid := exec.Command("raspivid", args...)
+	raspivid := execCommand("raspivid", args...)
 	raspividVideo, _ := raspivid.StdoutPipe()
 
 	return &Strm{
@@ -59,13 +61,13 @@ func Stream(options Options) *Strm {
 // Start starts the video stream.
 //
 // If Start returns successfully, strm.Video will have a video stream.
-func (strm *Strm) Start() {
-	strm.cmd.Start()
+func (strm *Strm) Start() error {
+	return strm.cmd.Start()
 }
 
 // Wait waits for the video stream to complete.
 //
 // The stream operation must have been started by Start.
-func (strm *Strm) Wait() {
-	strm.cmd.Wait()
+func (strm *Strm) Wait() error {
+	return strm.cmd.Wait()
 }
