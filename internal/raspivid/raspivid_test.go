@@ -73,7 +73,7 @@ func TestStartAndWait(t *testing.T) {
 func mockExecCommand(command string, args ...string) *exec.Cmd {
 	cs := append([]string{command}, args...)
 	cmd := exec.Command(os.Args[0], cs...)
-	cmd.Env = append(os.Environ(), "GO_TEST_MODE=ffmpeg")
+	cmd.Env = append(os.Environ(), "GO_TEST_MODE=raspivid")
 	return cmd
 }
 
