@@ -1,6 +1,7 @@
 package hls
 
 import (
+	"errors"
 	"io"
 	"os/exec"
 	"path"
@@ -8,7 +9,7 @@ import (
 	"strings"
 )
 
-// Muxer does the thing
+// Muxer represents the HLS muxer.
 //
 // Ffmpeg will step in and use its own defaults if a value is not provided.
 type Muxer struct {
@@ -22,6 +23,7 @@ type Muxer struct {
 
 var execCommand = exec.Command
 
+// Start begins muxing the video stream to the HLS format.
 func (mx *Muxer) Start(video io.ReadCloser) error {
 	args := []string{
 		"-codec", "copy",
@@ -60,9 +62,13 @@ func (mx *Muxer) Start(video io.ReadCloser) error {
 	return mx.cmd.Start()
 }
 
-// Wait waits for the video stream to finish processing.
+// Wait blocks until the video stream is finished processing.
 //
 // The mux operation must have been started by Start.
 func (mx *Muxer) Wait() error {
+	if mx.cmd == nil {
+		return errors.New("ffmpeg hls: not started")
+	}
+
 	return mx.cmd.Wait()
 }

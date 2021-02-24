@@ -19,7 +19,7 @@ type Stream struct {
 	cmd            *exec.Cmd
 }
 
-// Start starts the video stream.
+// Start begins the video stream.
 func (strm *Stream) Start() (io.ReadCloser, error) {
 	args := []string{"-o", "-", "-t", "0"}
 

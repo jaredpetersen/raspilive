@@ -134,7 +134,7 @@ func TestStartReturnsError(t *testing.T) {
 	_, err := raspividStream.Start()
 
 	if err == nil {
-		t.Error("Started failed to return an error")
+		t.Error("Start failed to return an error")
 	}
 }
 
