@@ -1,10 +1,12 @@
 package main
 
 import (
+	"fmt"
 	"io"
 	"log"
 	"net/http"
 	"os"
+	"regexp"
 	"strconv"
 	"strings"
 	"sync"
@@ -47,10 +49,8 @@ type MpegdashConfig struct {
 
 // Config represents the configuration for raspilive.
 type Config struct {
-	Mode     string `required:"true"`
-	Video    VideoConfig
-	Hls      HlsConfig
-	Mpegdash MpegdashConfig
+	Mode  string `required:"true"`
+	Video VideoConfig
 }
 
 // Muxer is a video transformation device for modifying raw video into a format suitable for the user.
@@ -60,10 +60,12 @@ type Muxer interface {
 }
 
 func main() {
+	// Envconfig's nested struct parsing breaks down with nested structs that have required tags
+	// so we keep the configs for each of the different modes separate
 	var config Config
 	err := envconfig.Process("raspilive", &config)
 	if err != nil {
-		log.Fatal(err.Error())
+		log.Fatal(err)
 	}
 
 	raspividStream := raspivid.Stream{
@@ -76,24 +78,36 @@ func main() {
 
 	switch strings.ToUpper(config.Mode) {
 	case "HLS":
-		muxer := hls.Muxer{
-			Directory:    config.Hls.Directory,
-			Fps:          config.Video.Fps,
-			SegmentTime:  config.Hls.SegmentTime,
-			PlaylistSize: config.Hls.PlaylistSize,
-			StorageSize:  config.Hls.StorageSize,
+		var hlsConfig HlsConfig
+		err := envconfig.Process("raspilive_hls", &hlsConfig)
+		if err != nil {
+			log.Fatal(rewriteEnvconfigErr(err))
 		}
-		server := newStaticServer(config.Hls.Port, config.Hls.Directory)
+
+		muxer := hls.Muxer{
+			Directory:    hlsConfig.Directory,
+			Fps:          config.Video.Fps,
+			SegmentTime:  hlsConfig.SegmentTime,
+			PlaylistSize: hlsConfig.PlaylistSize,
+			StorageSize:  hlsConfig.StorageSize,
+		}
+		server := newStaticServer(hlsConfig.Port, hlsConfig.Directory)
 		muxAndServe(raspividStream, &muxer, server)
 	case "MPEGDASH":
-		muxer := mpegdash.Muxer{
-			Directory:    config.Hls.Directory,
-			Fps:          config.Video.Fps,
-			SegmentTime:  config.Hls.SegmentTime,
-			PlaylistSize: config.Hls.PlaylistSize,
-			StorageSize:  config.Hls.StorageSize,
+		var mpegdashConfig MpegdashConfig
+		err := envconfig.Process("raspilive_mpegdash", &mpegdashConfig)
+		if err != nil {
+			log.Fatal(rewriteEnvconfigErr(err))
 		}
-		server := newStaticServer(config.Mpegdash.Port, config.Mpegdash.Directory)
+
+		muxer := mpegdash.Muxer{
+			Directory:    mpegdashConfig.Directory,
+			Fps:          config.Video.Fps,
+			SegmentTime:  mpegdashConfig.SegmentTime,
+			PlaylistSize: mpegdashConfig.PlaylistSize,
+			StorageSize:  mpegdashConfig.StorageSize,
+		}
+		server := newStaticServer(mpegdashConfig.Port, mpegdashConfig.Directory)
 		muxAndServe(raspividStream, &muxer, server)
 	default:
 		log.Println("Invalid streaming mode")
@@ -149,4 +163,20 @@ func newStaticServer(port int, directory string) *http.Server {
 		Addr:    ":" + strconv.Itoa(port),
 		Handler: router,
 	}
+}
+
+// rewriteEnvconfigErr converts errors from the envconfig package into something we want to show users.
+func rewriteEnvconfigErr(err error) error {
+	pattern := regexp.MustCompile(`required key ([A-Z_]*) missing value`)
+	matches := pattern.FindStringSubmatch(fmt.Sprint(err))
+
+	var newErr error
+
+	if matches != nil {
+		newErr = fmt.Errorf("Required config key %s is missing", matches[1])
+	} else {
+		newErr = err
+	}
+
+	return newErr
 }
