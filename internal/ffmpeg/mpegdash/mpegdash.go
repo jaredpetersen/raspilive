@@ -1,6 +1,7 @@
 package mpegdash
 
 import (
+	"errors"
 	"io"
 	"os/exec"
 	"path"
@@ -9,25 +10,20 @@ import (
 
 // Muxer represents a video transformation operation being prepared or run.
 //
-// A Muxer cannot be reused after calling its Start method.
-type Muxer struct {
-	cmd *exec.Cmd
-}
-
-// Options represents video muxing options for MPEG-DASH.
-//
 // Ffmpeg will step in and use its own defaults if a value is not provided.
-type Options struct {
+type Muxer struct {
+	Directory    string
 	Fps          int // Framerate of the output video
 	SegmentTime  int // Segment length target duration in seconds
 	PlaylistSize int // Maximum number of playlist entries
 	StorageSize  int // Maximum number of unreferenced segments to keep on disk before removal
+	cmd          *exec.Cmd
 }
 
 var execCommand = exec.Command
 
-// MpegDash prepares to mux a video stream into MPEG-DASH.
-func MpegDash(inputStream io.ReadCloser, directory string, options Options) *Muxer {
+// Start begins muxing the video stream to the HLS format.
+func (muxer *Muxer) Start(video io.ReadCloser) error {
 	args := []string{
 		"-codec", "copy",
 		"-f", "dash",
@@ -37,34 +33,27 @@ func MpegDash(inputStream io.ReadCloser, directory string, options Options) *Mux
 		"-media_seg_name", "$Time$-$Number$.m4s",
 	}
 
-	if options.Fps != 0 {
-		args = append(args, "-r", strconv.Itoa(options.Fps))
+	if muxer.Fps != 0 {
+		args = append(args, "-r", strconv.Itoa(muxer.Fps))
 	}
 
-	if options.SegmentTime != 0 {
-		args = append(args, "-seg_duration", strconv.Itoa(options.SegmentTime))
+	if muxer.SegmentTime != 0 {
+		args = append(args, "-seg_duration", strconv.Itoa(muxer.SegmentTime))
 	}
 
-	if options.PlaylistSize != 0 {
-		args = append(args, "-window_size", strconv.Itoa(options.PlaylistSize))
+	if muxer.PlaylistSize != 0 {
+		args = append(args, "-window_size", strconv.Itoa(muxer.PlaylistSize))
 	}
 
-	if options.StorageSize != 0 {
-		args = append(args, "-extra_window_size", strconv.Itoa(options.StorageSize))
+	if muxer.StorageSize != 0 {
+		args = append(args, "-extra_window_size", strconv.Itoa(muxer.StorageSize))
 	}
 
-	args = append(args, path.Join(directory, "livestream.mpd"))
+	args = append(args, path.Join(muxer.Directory, "livestream.mpd"))
 
-	ffmpegCommand := execCommand("ffmpeg", args...)
-	ffmpegCommand.Stdin = inputStream
+	muxer.cmd = execCommand("ffmpeg", args...)
+	muxer.cmd.Stdin = video
 
-	return &Muxer{
-		cmd: ffmpegCommand,
-	}
-}
-
-// Start muxes the prepared video stream into MPEG-DASH.
-func (muxer *Muxer) Start() error {
 	return muxer.cmd.Start()
 }
 
@@ -72,5 +61,9 @@ func (muxer *Muxer) Start() error {
 //
 // The mux operation must have been started by Start.
 func (muxer *Muxer) Wait() error {
+	if muxer.cmd == nil {
+		return errors.New("ffmpeg mpegdash: not started")
+	}
+
 	return muxer.cmd.Wait()
 }

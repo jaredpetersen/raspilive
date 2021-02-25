@@ -24,7 +24,7 @@ type Muxer struct {
 var execCommand = exec.Command
 
 // Start begins muxing the video stream to the HLS format.
-func (mx *Muxer) Start(video io.ReadCloser) error {
+func (muxer *Muxer) Start(video io.ReadCloser) error {
 	args := []string{
 		"-codec", "copy",
 		"-f", "hls",
@@ -36,39 +36,39 @@ func (mx *Muxer) Start(video io.ReadCloser) error {
 	}
 	hlsFlags := []string{"second_level_segment_index"}
 
-	if mx.Fps != 0 {
-		args = append(args, "-r", strconv.Itoa(mx.Fps))
+	if muxer.Fps != 0 {
+		args = append(args, "-r", strconv.Itoa(muxer.Fps))
 	}
 
-	if mx.SegmentTime != 0 {
-		args = append(args, "-hls_time", strconv.Itoa(mx.SegmentTime))
+	if muxer.SegmentTime != 0 {
+		args = append(args, "-hls_time", strconv.Itoa(muxer.SegmentTime))
 		hlsFlags = append(hlsFlags, "split_by_time")
 	}
 
-	if mx.PlaylistSize != 0 {
-		args = append(args, "-hls_list_size", strconv.Itoa(mx.PlaylistSize))
+	if muxer.PlaylistSize != 0 {
+		args = append(args, "-hls_list_size", strconv.Itoa(muxer.PlaylistSize))
 	}
 
-	if mx.StorageSize != 0 {
-		args = append(args, "-hls_delete_threshold", strconv.Itoa(mx.StorageSize))
+	if muxer.StorageSize != 0 {
+		args = append(args, "-hls_delete_threshold", strconv.Itoa(muxer.StorageSize))
 		hlsFlags = append(hlsFlags, "delete_segments")
 	}
 
-	args = append(args, "-hls_flags", strings.Join(hlsFlags, "+"), path.Join(mx.Directory, "livestream.m3u8"))
+	args = append(args, "-hls_flags", strings.Join(hlsFlags, "+"), path.Join(muxer.Directory, "livestream.m3u8"))
 
-	mx.cmd = execCommand("ffmpeg", args...)
-	mx.cmd.Stdin = video
+	muxer.cmd = execCommand("ffmpeg", args...)
+	muxer.cmd.Stdin = video
 
-	return mx.cmd.Start()
+	return muxer.cmd.Start()
 }
 
 // Wait blocks until the video stream is finished processing.
 //
 // The mux operation must have been started by Start.
-func (mx *Muxer) Wait() error {
-	if mx.cmd == nil {
+func (muxer *Muxer) Wait() error {
+	if muxer.cmd == nil {
 		return errors.New("ffmpeg hls: not started")
 	}
 
-	return mx.cmd.Wait()
+	return muxer.cmd.Wait()
 }
