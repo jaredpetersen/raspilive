@@ -24,6 +24,6 @@ scp -r <local_dir> pi@raspberrypi:<remote_dir>
 
 Copy files from the Raspberry Pi to localhost:
 ```zsh
-scp pi@raspberrypi:/home/pi/image.jpg .
+scp pi@raspberrypi:<file_path> .
 scp -r pi@raspberrypi:<remote_dir> <local_dir>
 ```
