@@ -38,10 +38,11 @@ streaming format that works by splitting the video into small consummable segmen
 changing playlist of files. The client reads from the playlist and downloads the video segments as needed. DASH
 requires a static file server to serve all of these files and raspilive provides this out of the box automatically.
 
-| Environment Variable         | Required | Description                                                            |
-| ---------------------------- | -------- | ---------------------------------------------------------------------- |
+| Environment Variable          | Required | Description                                                            |
+| ----------------------------- | -------- | ---------------------------------------------------------------------- |
 | `RASPILIVE_DASH_PORT`         | True     | Static file server port number                                         |
 | `RASPILIVE_DASH_DIRECTORY`    | False    | Location on disk where files are to be stored and served from          |
+| `RASPILIVE_DASH_SEGMENTTYPE`  | False    | Video segment type                                                     |
 | `RASPILIVE_DASH_SEGMENTTIME`  | False    | Duration of the video segments in seconds                              |
 | `RASPILIVE_DASH_PLAYLISTSIZE` | False    | Maximum number of entries in the playlist at one time                  |
 | `RASPILIVE_DASH_STORAGESIZE`  | False    | Maximum number of unreferenced segments to keep on disk before removal |

@@ -6,6 +6,7 @@ import (
 	"os/exec"
 	"path"
 	"strconv"
+	"strings"
 )
 
 // Muxer represents a video transformation operation being prepared or run.
@@ -13,10 +14,11 @@ import (
 // Ffmpeg will step in and use its own defaults if a value is not provided.
 type Muxer struct {
 	Directory    string
-	Fps          int // Framerate of the output video
-	SegmentTime  int // Segment length target duration in seconds
-	PlaylistSize int // Maximum number of playlist entries
-	StorageSize  int // Maximum number of unreferenced segments to keep on disk before removal
+	Fps          int    // Framerate of the output video
+	SegmentType  string // Format of the video segment
+	SegmentTime  int    // Segment length target duration in seconds
+	PlaylistSize int    // Maximum number of playlist entries
+	StorageSize  int    // Maximum number of unreferenced segments to keep on disk before removal
 	cmd          *exec.Cmd
 }
 
@@ -29,8 +31,19 @@ func (muxer *Muxer) Start(video io.ReadCloser) error {
 		"-f", "dash",
 		"-re",
 		"-an",
-		"-init_seg_name", "init.m4s",
-		"-media_seg_name", "$Time$-$Number$.m4s",
+		"-init_seg_name", "init.$ext$",
+		"-media_seg_name", "$Time$-$Number$.$ext$",
+	}
+
+	segmentType := strings.ToLower(muxer.SegmentType)
+	if segmentType == "" || segmentType == "auto" {
+		args = append(args, "-dash_segment_type", "auto")
+	} else if segmentType == "mp4" {
+		args = append(args, "-dash_segment_type", "mp4")
+	} else if segmentType == "webm" {
+		args = append(args, "-dash_segment_type", "webm")
+	} else {
+		return errors.New("ffmpeg dash: invalid segment type")
 	}
 
 	if muxer.Fps != 0 {

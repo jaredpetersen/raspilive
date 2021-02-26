@@ -195,7 +195,21 @@ func TestStart(t *testing.T) {
 	}
 }
 
-func TestStartReturnsError(t *testing.T) {
+func TestStartInvalidSegmentTypeReturnsError(t *testing.T) {
+	execCommand = mockExecCommand
+	defer func() { execCommand = exec.Command }()
+
+	videoStream := ioutil.NopCloser(strings.NewReader("totallyfakevideostream"))
+
+	hlsMuxer := Muxer{SegmentType: "badtype"}
+	err := hlsMuxer.Start(videoStream)
+
+	if err.Error() != "ffmpeg dash: invalid segment type" {
+		t.Error("Start failed to return an error for inavlid segment type")
+	}
+}
+
+func TestStartReturnsFfmpegError(t *testing.T) {
 	execCommand = mockFailedExecCommand
 	defer func() { execCommand = exec.Command }()
 

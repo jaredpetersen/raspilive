@@ -39,10 +39,11 @@ type HlsConfig struct {
 	StorageSize  int    // Maximum number of unreferenced segments to keep on disk before removal
 }
 
-// MpegdashConfig represents the configuraiton for HLS.
-type MpegdashConfig struct {
+// DashConfig represents the configuraiton for HLS.
+type DashConfig struct {
 	Port         int    `required:"true"`
 	Directory    string `default:"./camera"`
+	SegmentType  string // Segment video type
 	SegmentTime  int    // Segment length target duration in seconds
 	PlaylistSize int    // Maximum number of playlist entries
 	StorageSize  int    // Maximum number of unreferenced segments to keep on disk before removal
@@ -88,6 +89,7 @@ func main() {
 		muxer := hls.Muxer{
 			Directory:    hlsConfig.Directory,
 			Fps:          config.Video.Fps,
+			SegmentType:  hlsConfig.SegmentType,
 			SegmentTime:  hlsConfig.SegmentTime,
 			PlaylistSize: hlsConfig.PlaylistSize,
 			StorageSize:  hlsConfig.StorageSize,
@@ -95,7 +97,7 @@ func main() {
 		server := newStaticServer(hlsConfig.Port, hlsConfig.Directory)
 		muxAndServe(raspividStream, &muxer, server)
 	case "DASH":
-		var mpegdashConfig MpegdashConfig
+		var mpegdashConfig DashConfig
 		err := envconfig.Process("raspilive_dash", &mpegdashConfig)
 		if err != nil {
 			log.Fatal(rewriteEnvconfigErr(err))
@@ -104,6 +106,7 @@ func main() {
 		muxer := dash.Muxer{
 			Directory:    mpegdashConfig.Directory,
 			Fps:          config.Video.Fps,
+			SegmentType:  mpegdashConfig.SegmentType,
 			SegmentTime:  mpegdashConfig.SegmentTime,
 			PlaylistSize: mpegdashConfig.PlaylistSize,
 			StorageSize:  mpegdashConfig.StorageSize,

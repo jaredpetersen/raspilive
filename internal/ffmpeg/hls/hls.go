@@ -47,7 +47,7 @@ func (muxer *Muxer) Start(video io.ReadCloser) error {
 			"-hls_segment_type", "fmp4",
 			"-hls_segment_filename", "%s-%%d.m4s")
 	} else {
-		return errors.New("ffmpeg hls: invalid segment type")
+		return errors.New("ffmpeg dash: invalid segment type")
 	}
 
 	if muxer.Fps != 0 {

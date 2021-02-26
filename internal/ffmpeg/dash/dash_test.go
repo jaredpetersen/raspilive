@@ -35,8 +35,9 @@ func TestStart(t *testing.T) {
 				"-f", "dash",
 				"-re",
 				"-an",
-				"-init_seg_name", "init.m4s",
-				"-media_seg_name", "$Time$-$Number$.m4s",
+				"-init_seg_name", "init.$ext$",
+				"-media_seg_name", "$Time$-$Number$.$ext$",
+				"-dash_segment_type", "auto",
 				"livestream.mpd",
 			},
 		},
@@ -48,8 +49,9 @@ func TestStart(t *testing.T) {
 				"-f", "dash",
 				"-re",
 				"-an",
-				"-init_seg_name", "init.m4s",
-				"-media_seg_name", "$Time$-$Number$.m4s",
+				"-init_seg_name", "init.$ext$",
+				"-media_seg_name", "$Time$-$Number$.$ext$",
+				"-dash_segment_type", "auto",
 				path.Join("camera", "livestream.mpd"),
 			},
 		},
@@ -61,9 +63,52 @@ func TestStart(t *testing.T) {
 				"-f", "dash",
 				"-re",
 				"-an",
-				"-init_seg_name", "init.m4s",
-				"-media_seg_name", "$Time$-$Number$.m4s",
+				"-init_seg_name", "init.$ext$",
+				"-media_seg_name", "$Time$-$Number$.$ext$",
+				"-dash_segment_type", "auto",
 				"-r", "60",
+				"livestream.mpd",
+			},
+		},
+		{
+			Muxer{SegmentType: "aUtO"},
+			[]string{
+				"ffmpeg",
+				"-codec", "copy",
+				"-f", "dash",
+				"-re",
+				"-an",
+				"-init_seg_name", "init.$ext$",
+				"-media_seg_name", "$Time$-$Number$.$ext$",
+				"-dash_segment_type", "auto",
+				"livestream.mpd",
+			},
+		},
+		{
+			Muxer{SegmentType: "mP4"},
+			[]string{
+				"ffmpeg",
+				"-codec", "copy",
+				"-f", "dash",
+				"-re",
+				"-an",
+				"-init_seg_name", "init.$ext$",
+				"-media_seg_name", "$Time$-$Number$.$ext$",
+				"-dash_segment_type", "mp4",
+				"livestream.mpd",
+			},
+		},
+		{
+			Muxer{SegmentType: "WeBm"},
+			[]string{
+				"ffmpeg",
+				"-codec", "copy",
+				"-f", "dash",
+				"-re",
+				"-an",
+				"-init_seg_name", "init.$ext$",
+				"-media_seg_name", "$Time$-$Number$.$ext$",
+				"-dash_segment_type", "webm",
 				"livestream.mpd",
 			},
 		},
@@ -75,8 +120,9 @@ func TestStart(t *testing.T) {
 				"-f", "dash",
 				"-re",
 				"-an",
-				"-init_seg_name", "init.m4s",
-				"-media_seg_name", "$Time$-$Number$.m4s",
+				"-init_seg_name", "init.$ext$",
+				"-media_seg_name", "$Time$-$Number$.$ext$",
+				"-dash_segment_type", "auto",
 				"-seg_duration", "2",
 				"livestream.mpd",
 			},
@@ -89,8 +135,9 @@ func TestStart(t *testing.T) {
 				"-f", "dash",
 				"-re",
 				"-an",
-				"-init_seg_name", "init.m4s",
-				"-media_seg_name", "$Time$-$Number$.m4s",
+				"-init_seg_name", "init.$ext$",
+				"-media_seg_name", "$Time$-$Number$.$ext$",
+				"-dash_segment_type", "auto",
 				"-window_size", "50",
 				"livestream.mpd",
 			},
@@ -103,8 +150,9 @@ func TestStart(t *testing.T) {
 				"-f", "dash",
 				"-re",
 				"-an",
-				"-init_seg_name", "init.m4s",
-				"-media_seg_name", "$Time$-$Number$.m4s",
+				"-init_seg_name", "init.$ext$",
+				"-media_seg_name", "$Time$-$Number$.$ext$",
+				"-dash_segment_type", "auto",
 				"-extra_window_size", "100",
 				"livestream.mpd",
 			},
@@ -117,8 +165,9 @@ func TestStart(t *testing.T) {
 				"-f", "dash",
 				"-re",
 				"-an",
-				"-init_seg_name", "init.m4s",
-				"-media_seg_name", "$Time$-$Number$.m4s",
+				"-init_seg_name", "init.$ext$",
+				"-media_seg_name", "$Time$-$Number$.$ext$",
+				"-dash_segment_type", "auto",
 				"-r", "30",
 				"-seg_duration", "5",
 				"-window_size", "25",
@@ -151,7 +200,21 @@ func TestStart(t *testing.T) {
 	}
 }
 
-func TestStartReturnsError(t *testing.T) {
+func TestStartInvalidSegmentTypeReturnsError(t *testing.T) {
+	execCommand = mockExecCommand
+	defer func() { execCommand = exec.Command }()
+
+	videoStream := ioutil.NopCloser(strings.NewReader("totallyfakevideostream"))
+
+	mpegdashMuxer := Muxer{SegmentType: "badtype"}
+	err := mpegdashMuxer.Start(videoStream)
+
+	if err.Error() != "ffmpeg dash: invalid segment type" {
+		t.Error("Start failed to return an error for inavlid segment type")
+	}
+}
+
+func TestStartReturnsFfmpegError(t *testing.T) {
 	execCommand = mockFailedExecCommand
 	defer func() { execCommand = exec.Command }()
 
