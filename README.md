@@ -27,6 +27,7 @@ and raspilive provides this out of the box automatically.
 | ---------------------------- | -------- | ---------------------------------------------------------------------- |
 | `RASPILIVE_HLS_PORT`         | True     | Static file server port number                                         |
 | `RASPILIVE_HLS_DIRECTORY`    | False    | Location on disk where files are to be stored and served from          |
+| `RASPILIVE_HLS_SEGMENTTYPE`  | False    | Video segment type                                                     |
 | `RASPILIVE_HLS_SEGMENTTIME`  | False    | Duration of the video segments in seconds                              |
 | `RASPILIVE_HLS_PLAYLISTSIZE` | False    | Maximum number of entries in the playlist at one time                  |
 | `RASPILIVE_HLS_STORAGESIZE`  | False    | Maximum number of unreferenced segments to keep on disk before removal |

@@ -33,6 +33,7 @@ type VideoConfig struct {
 type HlsConfig struct {
 	Port         int    `required:"true"`
 	Directory    string `default:"./camera"`
+	SegmentType  string // Segment video type
 	SegmentTime  int    // Segment length target duration in seconds
 	PlaylistSize int    // Maximum number of playlist entries
 	StorageSize  int    // Maximum number of unreferenced segments to keep on disk before removal

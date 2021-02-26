@@ -14,10 +14,11 @@ import (
 // Ffmpeg will step in and use its own defaults if a value is not provided.
 type Muxer struct {
 	Directory    string
-	Fps          int // Framerate of the output video
-	SegmentTime  int // Segment length target duration in seconds
-	PlaylistSize int // Maximum number of playlist entries
-	StorageSize  int // Maximum number of unreferenced segments to keep on disk before removal
+	Fps          int    // Framerate of the output video
+	SegmentType  string // Format of the video segment
+	SegmentTime  int    // Segment length target duration in seconds
+	PlaylistSize int    // Maximum number of playlist entries
+	StorageSize  int    // Maximum number of unreferenced segments to keep on disk before removal
 	cmd          *exec.Cmd
 }
 
@@ -31,10 +32,23 @@ func (muxer *Muxer) Start(video io.ReadCloser) error {
 		"-re",
 		"-an",
 		"-strftime", "1",
-		"-hls_segment_filename", "%s-%%d.m4s",
-		"-hls_segment_type", "fmp4",
 	}
 	hlsFlags := []string{"second_level_segment_index"}
+
+	segmentType := strings.ToLower(muxer.SegmentType)
+	if segmentType == "" || segmentType == "mpegts" {
+		args = append(
+			args,
+			"-hls_segment_type", "mpegts",
+			"-hls_segment_filename", "%s-%%d.ts")
+	} else if segmentType == "fmp4" {
+		args = append(
+			args,
+			"-hls_segment_type", "fmp4",
+			"-hls_segment_filename", "%s-%%d.m4s")
+	} else {
+		return errors.New("ffmpeg hls: invalid segment type")
+	}
 
 	if muxer.Fps != 0 {
 		args = append(args, "-r", strconv.Itoa(muxer.Fps))
