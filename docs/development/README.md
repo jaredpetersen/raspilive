@@ -12,12 +12,8 @@ env GOOS=linux GOARCH=arm GOARM=6 go build ./cmd/raspilive
 
 Run tests:
 ```zsh
+go test ./...
 go test ./... -v
-go test ./... -cover
-```
-
-Run tests with code coverage:
-```zsh
 go test ./... -cover
 ```
 

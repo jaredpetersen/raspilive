@@ -1,4 +1,4 @@
-package mpegdash
+package dash
 
 import (
 	"errors"
@@ -62,7 +62,7 @@ func (muxer *Muxer) Start(video io.ReadCloser) error {
 // The mux operation must have been started by Start.
 func (muxer *Muxer) Wait() error {
 	if muxer.cmd == nil {
-		return errors.New("ffmpeg mpegdash: not started")
+		return errors.New("ffmpeg dash: not started")
 	}
 
 	return muxer.cmd.Wait()

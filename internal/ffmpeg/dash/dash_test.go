@@ -1,4 +1,4 @@
-package mpegdash
+package dash
 
 import (
 	"fmt"
@@ -110,7 +110,7 @@ func TestStart(t *testing.T) {
 			},
 		},
 		{
-			Muxer{Directory: "mpegdash", Fps: 30, SegmentTime: 5, PlaylistSize: 25, StorageSize: 50},
+			Muxer{Directory: "dash", Fps: 30, SegmentTime: 5, PlaylistSize: 25, StorageSize: 50},
 			[]string{
 				"ffmpeg",
 				"-codec", "copy",
@@ -123,7 +123,7 @@ func TestStart(t *testing.T) {
 				"-seg_duration", "5",
 				"-window_size", "25",
 				"-extra_window_size", "50",
-				path.Join("mpegdash", "livestream.mpd"),
+				path.Join("dash", "livestream.mpd"),
 			},
 		},
 	}
@@ -187,7 +187,7 @@ func TestWaitWithoutStartReturnsError(t *testing.T) {
 	mpegdashMuxer := Muxer{}
 	err := mpegdashMuxer.Wait()
 
-	if err == nil || err.Error() != "ffmpeg mpegdash: not started" {
+	if err == nil || err.Error() != "ffmpeg dash: not started" {
 		t.Error("Wait failed to return correct error when run without Start", err)
 	}
 }

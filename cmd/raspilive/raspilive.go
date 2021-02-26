@@ -11,8 +11,8 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/jaredpetersen/raspilive/internal/ffmpeg/dash"
 	"github.com/jaredpetersen/raspilive/internal/ffmpeg/hls"
-	"github.com/jaredpetersen/raspilive/internal/ffmpeg/mpegdash"
 	"github.com/jaredpetersen/raspilive/internal/raspivid"
 	"github.com/kelseyhightower/envconfig"
 )
@@ -93,14 +93,14 @@ func main() {
 		}
 		server := newStaticServer(hlsConfig.Port, hlsConfig.Directory)
 		muxAndServe(raspividStream, &muxer, server)
-	case "MPEGDASH":
+	case "DASH":
 		var mpegdashConfig MpegdashConfig
-		err := envconfig.Process("raspilive_mpegdash", &mpegdashConfig)
+		err := envconfig.Process("raspilive_dash", &mpegdashConfig)
 		if err != nil {
 			log.Fatal(rewriteEnvconfigErr(err))
 		}
 
-		muxer := mpegdash.Muxer{
+		muxer := dash.Muxer{
 			Directory:    mpegdashConfig.Directory,
 			Fps:          config.Video.Fps,
 			SegmentTime:  mpegdashConfig.SegmentTime,
