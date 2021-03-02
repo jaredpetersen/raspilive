@@ -70,12 +70,16 @@ func main() {
 		log.Fatal(err)
 	}
 
-	raspiStream := raspivid.Stream{
+	raspiOptions := raspivid.Options{
 		Width:          config.Video.Width,
 		Height:         config.Video.Height,
 		Fps:            config.Video.Fps,
 		HorizontalFlip: config.Video.HorizontalFlip,
 		VerticalFlip:   config.Video.VerticalFlip,
+	}
+	raspiStream, err := raspivid.NewStream(raspiOptions)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	switch strings.ToUpper(config.Mode) {
@@ -95,7 +99,7 @@ func main() {
 			StorageSize:  hlsConfig.StorageSize,
 		}
 		server := newStaticServer(hlsConfig.Port, hlsConfig.Directory)
-		muxAndServe(raspiStream, &muxer, server)
+		muxAndServe(*raspiStream, &muxer, server)
 	case "DASH":
 		var dashConfig DashConfig
 		err := envconfig.Process("raspilive_dash", &dashConfig)
@@ -112,7 +116,7 @@ func main() {
 			StorageSize:  dashConfig.StorageSize,
 		}
 		server := newStaticServer(dashConfig.Port, dashConfig.Directory)
-		muxAndServe(raspiStream, &muxer, server)
+		muxAndServe(*raspiStream, &muxer, server)
 	default:
 		log.Println("Invalid streaming mode")
 		os.Exit(1)
@@ -140,14 +144,12 @@ func muxAndServe(raspiStream raspivid.Stream, muxer Muxer, server *http.Server) 
 }
 
 func mux(raspiStream raspivid.Stream, muxer Muxer) error {
-	videoStream, err := raspiStream.Start()
-
+	err := muxer.Mux(raspiStream.Video)
 	if err != nil {
 		return err
 	}
 
-	err = muxer.Mux(videoStream)
-
+	err = raspiStream.Start()
 	if err != nil {
 		return err
 	}

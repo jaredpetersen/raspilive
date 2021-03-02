@@ -12,6 +12,7 @@ import (
 const fakeVideoStreamContent = "fakevideostream"
 
 func TestMain(m *testing.M) {
+	// Facilitate the "mocking" of os/exec by running a faked CLI program
 	switch os.Getenv("GO_TEST_MODE") {
 	case "":
 		os.Exit(m.Run())
@@ -21,13 +22,13 @@ func TestMain(m *testing.M) {
 	}
 }
 
-func TestStart(t *testing.T) {
+func TestNewStream(t *testing.T) {
 	testCases := []struct {
-		stream       Stream
+		options      Options
 		expectedArgs []string
 	}{
 		{
-			Stream{},
+			Options{},
 			[]string{
 				"raspivid",
 				"-o", "-",
@@ -35,7 +36,7 @@ func TestStart(t *testing.T) {
 			},
 		},
 		{
-			Stream{Width: 1920},
+			Options{Width: 1920},
 			[]string{
 				"raspivid",
 				"-o", "-",
@@ -44,7 +45,7 @@ func TestStart(t *testing.T) {
 			},
 		},
 		{
-			Stream{Height: 1080},
+			Options{Height: 1080},
 			[]string{
 				"raspivid",
 				"-o", "-",
@@ -53,7 +54,7 @@ func TestStart(t *testing.T) {
 			},
 		},
 		{
-			Stream{Fps: 60},
+			Options{Fps: 60},
 			[]string{
 				"raspivid",
 				"-o", "-",
@@ -62,7 +63,7 @@ func TestStart(t *testing.T) {
 			},
 		},
 		{
-			Stream{HorizontalFlip: true},
+			Options{HorizontalFlip: true},
 			[]string{
 				"raspivid",
 				"-o", "-",
@@ -71,7 +72,7 @@ func TestStart(t *testing.T) {
 			},
 		},
 		{
-			Stream{VerticalFlip: true},
+			Options{VerticalFlip: true},
 			[]string{
 				"raspivid",
 				"-o", "-",
@@ -80,7 +81,7 @@ func TestStart(t *testing.T) {
 			},
 		},
 		{
-			Stream{Width: 1280, Height: 720, Fps: 30, HorizontalFlip: true, VerticalFlip: true},
+			Options{Width: 1280, Height: 720, Fps: 30, HorizontalFlip: true, VerticalFlip: true},
 			[]string{
 				"raspivid",
 				"-o", "-",
@@ -94,35 +95,55 @@ func TestStart(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		t.Run(fmt.Sprintf("%v", tc.stream), func(t *testing.T) {
+		t.Run(fmt.Sprintf("%v", tc.options), func(t *testing.T) {
 			execCommand = mockExecCommand
 			defer func() { execCommand = exec.Command }()
 
-			raspividStream := tc.stream
-			videoStream, err := raspividStream.Start()
+			raspiStream, err := NewStream(tc.options)
 
 			if err != nil {
-				t.Error("Start produced an err", err)
+				t.Error("NewStream produced an err", err)
 			}
 
-			if videoStream == nil {
-				t.Error("Start produced a nil video stream")
-			}
-
-			buf := new(strings.Builder)
-			io.Copy(buf, videoStream)
-			videoStreamText := buf.String()
-
-			if videoStreamText != fakeVideoStreamContent {
-				t.Error("Start video stream is incorrect, got", videoStream)
-			}
-
-			raspividArgs := raspividStream.cmd.Args[1:]
+			raspividArgs := raspiStream.cmd.Args[1:]
 
 			if !equal(raspividArgs, tc.expectedArgs) {
 				t.Error("Command args do not match, got", raspividArgs)
 			}
+
+			if raspiStream.Video == nil {
+				t.Error("NewStream produced a Stream without video output")
+			}
+
+			if raspiStream.cmd.Process != nil {
+				t.Error("NewStream started the stream prematurely")
+			}
 		})
+	}
+}
+
+func TestStart(t *testing.T) {
+	execCommand = mockExecCommand
+	defer func() { execCommand = exec.Command }()
+
+	raspiStream, _ := NewStream(Options{})
+	err := raspiStream.Start()
+
+	if err != nil {
+		t.Error("Start produced an err", err)
+	}
+
+	if raspiStream.cmd.Process == nil {
+		t.Error("Start failed to start raspivid")
+	}
+
+	// Unwrap video stream
+	buf := new(strings.Builder)
+	io.Copy(buf, raspiStream.Video)
+	videoText := buf.String()
+
+	if videoText != fakeVideoStreamContent {
+		t.Error("Video output is invalid", videoText)
 	}
 }
 
@@ -130,11 +151,23 @@ func TestStartReturnsError(t *testing.T) {
 	execCommand = mockFailedExecCommand
 	defer func() { execCommand = exec.Command }()
 
-	raspividStream := Stream{}
-	_, err := raspividStream.Start()
+	raspiStream, _ := NewStream(Options{})
+	err := raspiStream.Start()
 
 	if err == nil {
 		t.Error("Start failed to return an error")
+	}
+}
+
+func TestStartBadStreamReturnsError(t *testing.T) {
+	execCommand = mockFailedExecCommand
+	defer func() { execCommand = exec.Command }()
+
+	raspiStream := Stream{Video: io.NopCloser(strings.NewReader(fakeVideoStreamContent))}
+	err := raspiStream.Start()
+
+	if err == nil || err.Error() != "raspivid: not created" {
+		t.Error("Start failed to return correct error", err)
 	}
 }
 
@@ -142,12 +175,24 @@ func TestWait(t *testing.T) {
 	execCommand = mockExecCommand
 	defer func() { execCommand = exec.Command }()
 
-	raspividStream := Stream{}
-	raspividStream.Start()
-	err := raspividStream.Wait()
+	raspiStream, _ := NewStream(Options{})
+	raspiStream.Start()
+	err := raspiStream.Wait()
 
 	if err != nil {
 		t.Error("Wait returned an error", err)
+	}
+}
+
+func TestWaitBadStreamReturnsError(t *testing.T) {
+	execCommand = mockExecCommand
+	defer func() { execCommand = exec.Command }()
+
+	raspiStream := Stream{Video: io.NopCloser(strings.NewReader(fakeVideoStreamContent))}
+	err := raspiStream.Wait()
+
+	if err == nil || err.Error() != "raspivid: not created" {
+		t.Error("Wait failed to return correct error", err)
 	}
 }
 
@@ -155,11 +200,11 @@ func TestWaitWithoutStartReturnsError(t *testing.T) {
 	execCommand = mockExecCommand
 	defer func() { execCommand = exec.Command }()
 
-	raspividStream := Stream{}
-	err := raspividStream.Wait()
+	raspiStream, _ := NewStream(Options{})
+	err := raspiStream.Wait()
 
 	if err == nil || err.Error() != "raspivid: not started" {
-		t.Error("Wait failed to return correct error when run without Start", err)
+		t.Error("Wait failed to return correct error", err)
 	}
 }
 
@@ -177,6 +222,7 @@ func TestWaitAgainReturnsError(t *testing.T) {
 	}
 }
 
+// mockExecCommaned sets up a mocked exec.Command using TestMain
 func mockExecCommand(command string, args ...string) *exec.Cmd {
 	cs := append([]string{command}, args...)
 	cmd := exec.Command(os.Args[0], cs...)
@@ -184,6 +230,7 @@ func mockExecCommand(command string, args ...string) *exec.Cmd {
 	return cmd
 }
 
+// mockFailedExecCommaned sets up a exec.Command that will fail
 func mockFailedExecCommand(command string, args ...string) *exec.Cmd {
 	cmd := exec.Command("totallyfakecommandthatdoesnotexist")
 	return cmd

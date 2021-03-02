@@ -9,54 +9,62 @@ import (
 
 var execCommand = exec.Command
 
-// Stream represents a Raspberry Pi camera video streamer.
-type Stream struct {
+// Options represents a Raspberry Pi camera video streamer.
+type Options struct {
 	Width          int
 	Height         int
 	Fps            int
 	HorizontalFlip bool
 	VerticalFlip   bool
-	cmd            *exec.Cmd
 }
 
-// Start begins the video stream.
-func (strm *Stream) Start() (io.ReadCloser, error) {
+// Stream represents a Raspberry Pi camera video streamer.
+type Stream struct {
+	Video io.ReadCloser
+	cmd   *exec.Cmd
+}
+
+// NewStream creates a new video stream out of the Raspberry Pi Camera Module.
+func NewStream(options Options) (*Stream, error) {
 	args := []string{"-o", "-", "-t", "0"}
 
-	if strm.Width != 0 {
-		args = append(args, "--width", strconv.Itoa(strm.Width))
+	if options.Width != 0 {
+		args = append(args, "--width", strconv.Itoa(options.Width))
 	}
 
-	if strm.Height != 0 {
-		args = append(args, "--height", strconv.Itoa(strm.Height))
+	if options.Height != 0 {
+		args = append(args, "--height", strconv.Itoa(options.Height))
 	}
 
-	if strm.Fps != 0 {
-		args = append(args, "--framerate", strconv.Itoa(strm.Fps))
+	if options.Fps != 0 {
+		args = append(args, "--framerate", strconv.Itoa(options.Fps))
 	}
 
-	if strm.HorizontalFlip {
+	if options.HorizontalFlip {
 		args = append(args, "--hflip")
 	}
 
-	if strm.VerticalFlip {
+	if options.VerticalFlip {
 		args = append(args, "--vflip")
 	}
 
-	strm.cmd = execCommand("raspivid", args...)
-	video, err := strm.cmd.StdoutPipe()
+	cmd := execCommand("raspivid", args...)
+	video, err := cmd.StdoutPipe()
 
 	if err != nil {
 		return nil, err
 	}
 
-	err = strm.cmd.Start()
+	return &Stream{Video: video, cmd: cmd}, nil
+}
 
-	if err != nil {
-		return nil, err
+// Start begins the video stream.
+func (strm *Stream) Start() error {
+	if strm.cmd == nil {
+		return errors.New("raspivid: not created")
 	}
 
-	return video, err
+	return strm.cmd.Start()
 }
 
 // Wait waits for the video stream to complete.
@@ -64,6 +72,9 @@ func (strm *Stream) Start() (io.ReadCloser, error) {
 // The stream operation must have been started by Start.
 func (strm *Stream) Wait() error {
 	if strm.cmd == nil {
+		return errors.New("raspivid: not created")
+	}
+	if strm.cmd.Process == nil {
 		return errors.New("raspivid: not started")
 	}
 
