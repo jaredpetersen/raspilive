@@ -57,7 +57,7 @@ type Config struct {
 
 // Muxer is a video transformation device for modifying raw video into a format suitable for the user.
 type Muxer interface {
-	Start(video io.ReadCloser) error
+	Mux(video io.ReadCloser) error
 	Wait() error
 }
 
@@ -70,7 +70,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	raspividStream := raspivid.Stream{
+	raspiStream := raspivid.Stream{
 		Width:          config.Video.Width,
 		Height:         config.Video.Height,
 		Fps:            config.Video.Fps,
@@ -83,7 +83,7 @@ func main() {
 		var hlsConfig HlsConfig
 		err := envconfig.Process("raspilive_hls", &hlsConfig)
 		if err != nil {
-			log.Fatal(rewriteEnvconfigErr(err))
+			log.Fatal(transformError(err))
 		}
 
 		muxer := hls.Muxer{
@@ -95,31 +95,31 @@ func main() {
 			StorageSize:  hlsConfig.StorageSize,
 		}
 		server := newStaticServer(hlsConfig.Port, hlsConfig.Directory)
-		muxAndServe(raspividStream, &muxer, server)
+		muxAndServe(raspiStream, &muxer, server)
 	case "DASH":
-		var mpegdashConfig DashConfig
-		err := envconfig.Process("raspilive_dash", &mpegdashConfig)
+		var dashConfig DashConfig
+		err := envconfig.Process("raspilive_dash", &dashConfig)
 		if err != nil {
-			log.Fatal(rewriteEnvconfigErr(err))
+			log.Fatal(transformError(err))
 		}
 
 		muxer := dash.Muxer{
-			Directory:    mpegdashConfig.Directory,
+			Directory:    dashConfig.Directory,
 			Fps:          config.Video.Fps,
-			SegmentType:  mpegdashConfig.SegmentType,
-			SegmentTime:  mpegdashConfig.SegmentTime,
-			PlaylistSize: mpegdashConfig.PlaylistSize,
-			StorageSize:  mpegdashConfig.StorageSize,
+			SegmentType:  dashConfig.SegmentType,
+			SegmentTime:  dashConfig.SegmentTime,
+			PlaylistSize: dashConfig.PlaylistSize,
+			StorageSize:  dashConfig.StorageSize,
 		}
-		server := newStaticServer(mpegdashConfig.Port, mpegdashConfig.Directory)
-		muxAndServe(raspividStream, &muxer, server)
+		server := newStaticServer(dashConfig.Port, dashConfig.Directory)
+		muxAndServe(raspiStream, &muxer, server)
 	default:
 		log.Println("Invalid streaming mode")
 		os.Exit(1)
 	}
 }
 
-func muxAndServe(raspividStream raspivid.Stream, muxer Muxer, server *http.Server) {
+func muxAndServe(raspiStream raspivid.Stream, muxer Muxer, server *http.Server) {
 	var wg sync.WaitGroup
 	wg.Add(2)
 
@@ -132,28 +132,28 @@ func muxAndServe(raspividStream raspivid.Stream, muxer Muxer, server *http.Serve
 
 	// Stream video
 	go func() {
-		log.Fatal(mux(raspividStream, muxer))
+		log.Fatal(mux(raspiStream, muxer))
 		wg.Done()
 	}()
 
 	wg.Wait()
 }
 
-func mux(raspividStream raspivid.Stream, muxer Muxer) error {
-	videoStream, err := raspividStream.Start()
+func mux(raspiStream raspivid.Stream, muxer Muxer) error {
+	videoStream, err := raspiStream.Start()
 
 	if err != nil {
 		return err
 	}
 
-	err = muxer.Start(videoStream)
+	err = muxer.Mux(videoStream)
 
 	if err != nil {
 		return err
 	}
 
 	// Wait for everything to complete
-	raspividStream.Wait()
+	raspiStream.Wait()
 	muxer.Wait()
 
 	return nil
@@ -169,8 +169,8 @@ func newStaticServer(port int, directory string) *http.Server {
 	}
 }
 
-// rewriteEnvconfigErr converts errors from the envconfig package into something we want to show users.
-func rewriteEnvconfigErr(err error) error {
+// transformError converts errors into something we want to show users.
+func transformError(err error) error {
 	pattern := regexp.MustCompile(`required key ([A-Z_]*) missing value`)
 	matches := pattern.FindStringSubmatch(fmt.Sprint(err))
 

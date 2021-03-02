@@ -180,7 +180,7 @@ func TestStart(t *testing.T) {
 			videoStream := ioutil.NopCloser(strings.NewReader("totallyfakevideostream"))
 
 			hlsMuxer := tc.muxer
-			err := hlsMuxer.Start(videoStream)
+			err := hlsMuxer.Mux(videoStream)
 
 			if err != nil {
 				t.Error("Start produced an err", err)
@@ -202,7 +202,7 @@ func TestStartInvalidSegmentTypeReturnsError(t *testing.T) {
 	videoStream := ioutil.NopCloser(strings.NewReader("totallyfakevideostream"))
 
 	hlsMuxer := Muxer{SegmentType: "badtype"}
-	err := hlsMuxer.Start(videoStream)
+	err := hlsMuxer.Mux(videoStream)
 
 	if err.Error() != "ffmpeg dash: invalid segment type" {
 		t.Error("Start failed to return an error for inavlid segment type")
@@ -216,7 +216,7 @@ func TestStartReturnsFfmpegError(t *testing.T) {
 	videoStream := ioutil.NopCloser(strings.NewReader("totallyfakevideostream"))
 
 	hlsMuxer := Muxer{}
-	err := hlsMuxer.Start(videoStream)
+	err := hlsMuxer.Mux(videoStream)
 
 	if err == nil {
 		t.Error("Start failed to return an error")
@@ -230,7 +230,7 @@ func TestWait(t *testing.T) {
 	videoStream := ioutil.NopCloser(strings.NewReader("totallyfakevideostream"))
 
 	hlsMuxer := Muxer{}
-	hlsMuxer.Start(videoStream)
+	hlsMuxer.Mux(videoStream)
 	err := hlsMuxer.Wait()
 
 	if err != nil {
@@ -257,7 +257,7 @@ func TestWaitAgainReturnsError(t *testing.T) {
 	videoStream := ioutil.NopCloser(strings.NewReader("totallyfakevideostream"))
 
 	hlsMuxer := Muxer{}
-	hlsMuxer.Start(videoStream)
+	hlsMuxer.Mux(videoStream)
 	hlsMuxer.Wait()
 	err := hlsMuxer.Wait()
 

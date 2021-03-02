@@ -24,8 +24,8 @@ type Muxer struct {
 
 var execCommand = exec.Command
 
-// Start begins muxing the video stream to the HLS format.
-func (muxer *Muxer) Start(video io.ReadCloser) error {
+// Mux begins muxing the video stream to the HLS format.
+func (muxer *Muxer) Mux(video io.ReadCloser) error {
 	args := []string{
 		"-codec", "copy",
 		"-f", "dash",
