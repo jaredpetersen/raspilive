@@ -3,6 +3,7 @@ package raspivid
 import (
 	"errors"
 	"io"
+	"log"
 	"os/exec"
 	"strconv"
 )
@@ -65,6 +66,8 @@ func (strm *Stream) Start() error {
 	if strm.cmd == nil {
 		return errors.New("raspivid: not created")
 	}
+
+	log.Println("raspivid", strm.cmd.String())
 
 	return strm.cmd.Start()
 }

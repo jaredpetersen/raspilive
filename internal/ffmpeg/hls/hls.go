@@ -3,6 +3,7 @@ package hls
 import (
 	"errors"
 	"io"
+	"log"
 	"os/exec"
 	"path"
 	"strconv"
@@ -32,9 +33,10 @@ var execCommand = exec.Command
 // Mux begins muxing the video stream to the HLS format.
 func (muxer *Muxer) Mux(video io.ReadCloser) error {
 	args := []string{
+		"-re",
+		"-i", "pipe:0",
 		"-codec", "copy",
 		"-f", "hls",
-		"-re",
 		"-an",
 		"-strftime", "1",
 	}
@@ -45,12 +47,12 @@ func (muxer *Muxer) Mux(video io.ReadCloser) error {
 		args = append(
 			args,
 			"-hls_segment_type", "mpegts",
-			"-hls_segment_filename", "%s-%%d.ts")
+			"-hls_segment_filename", path.Join(muxer.Directory, "%s-%%d.ts"))
 	} else if segmentType == "fmp4" {
 		args = append(
 			args,
 			"-hls_segment_type", "fmp4",
-			"-hls_segment_filename", "%s-%%d.m4s")
+			"-hls_segment_filename", path.Join(muxer.Directory, "%s-%%d.m4s"))
 	} else {
 		return errors.New("ffmpeg dash: invalid segment type")
 	}
@@ -77,6 +79,8 @@ func (muxer *Muxer) Mux(video io.ReadCloser) error {
 
 	muxer.cmd = execCommand("ffmpeg", args...)
 	muxer.cmd.Stdin = video
+
+	log.Println("ffmpeg", muxer.cmd.String())
 
 	return muxer.cmd.Start()
 }

@@ -3,6 +3,7 @@ package dash
 import (
 	"errors"
 	"io"
+	"log"
 	"os/exec"
 	"path"
 	"strconv"
@@ -32,25 +33,25 @@ var execCommand = exec.Command
 // Mux begins muxing the video stream to the DASH format.
 func (muxer *Muxer) Mux(video io.ReadCloser) error {
 	args := []string{
+		"-re",
+		"-i", "pipe:0",
 		"-codec", "copy",
 		"-f", "dash",
-		"-re",
 		"-an",
 		"-init_seg_name", "init.$ext$",
 		"-media_seg_name", "$Time$-$Number$.$ext$",
 	}
 
 	segmentType := strings.ToLower(muxer.Options.SegmentType)
-	if segmentType == "" || segmentType == "auto" {
-		args = append(args, "-dash_segment_type", "auto")
-	} else if segmentType == "mp4" {
+	if segmentType == "mp4" {
 		args = append(args, "-dash_segment_type", "mp4")
 	} else if segmentType == "webm" {
 		args = append(args, "-dash_segment_type", "webm")
-	} else {
+	} else if segmentType != "" && segmentType != "auto" {
 		return errors.New("ffmpeg dash: invalid segment type")
 	}
 
+	// TODO this is probably unecessary since we rely on input FPS
 	if muxer.Options.Fps != 0 {
 		args = append(args, "-r", strconv.Itoa(muxer.Options.Fps))
 	}
@@ -71,6 +72,8 @@ func (muxer *Muxer) Mux(video io.ReadCloser) error {
 
 	muxer.cmd = execCommand("ffmpeg", args...)
 	muxer.cmd.Stdin = video
+
+	log.Println("ffmpeg", muxer.cmd.String())
 
 	return muxer.cmd.Start()
 }
