@@ -7,7 +7,7 @@ go build ./cmd/raspilive
 
 Build for Raspberry Pi:
 ```zsh
-env GOOS=linux GOARCH=arm GOARM=6 go build ./cmd/raspilive
+env GOOS=linux GOARCH=arm GOARM=6 go build ./cmd/...
 ```
 
 Run tests:
