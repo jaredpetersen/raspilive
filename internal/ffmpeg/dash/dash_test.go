@@ -56,7 +56,7 @@ func TestStart(t *testing.T) {
 			},
 		},
 		{
-			Muxer{Fps: 60},
+			Muxer{Options: Options{Fps: 60}},
 			[]string{
 				"ffmpeg",
 				"-codec", "copy",
@@ -71,7 +71,7 @@ func TestStart(t *testing.T) {
 			},
 		},
 		{
-			Muxer{SegmentType: "aUtO"},
+			Muxer{Options: Options{SegmentType: "aUtO"}},
 			[]string{
 				"ffmpeg",
 				"-codec", "copy",
@@ -85,7 +85,7 @@ func TestStart(t *testing.T) {
 			},
 		},
 		{
-			Muxer{SegmentType: "mP4"},
+			Muxer{Options: Options{SegmentType: "mP4"}},
 			[]string{
 				"ffmpeg",
 				"-codec", "copy",
@@ -99,7 +99,7 @@ func TestStart(t *testing.T) {
 			},
 		},
 		{
-			Muxer{SegmentType: "WeBm"},
+			Muxer{Options: Options{SegmentType: "WeBm"}},
 			[]string{
 				"ffmpeg",
 				"-codec", "copy",
@@ -113,7 +113,7 @@ func TestStart(t *testing.T) {
 			},
 		},
 		{
-			Muxer{SegmentTime: 2},
+			Muxer{Options: Options{SegmentTime: 2}},
 			[]string{
 				"ffmpeg",
 				"-codec", "copy",
@@ -128,7 +128,7 @@ func TestStart(t *testing.T) {
 			},
 		},
 		{
-			Muxer{PlaylistSize: 50},
+			Muxer{Options: Options{PlaylistSize: 50}},
 			[]string{
 				"ffmpeg",
 				"-codec", "copy",
@@ -143,7 +143,7 @@ func TestStart(t *testing.T) {
 			},
 		},
 		{
-			Muxer{StorageSize: 100},
+			Muxer{Options: Options{StorageSize: 100}},
 			[]string{
 				"ffmpeg",
 				"-codec", "copy",
@@ -158,7 +158,7 @@ func TestStart(t *testing.T) {
 			},
 		},
 		{
-			Muxer{Directory: "dash", Fps: 30, SegmentTime: 5, PlaylistSize: 25, StorageSize: 50},
+			Muxer{Directory: "dash", Options: Options{Fps: 30, SegmentTime: 5, PlaylistSize: 25, StorageSize: 50}},
 			[]string{
 				"ffmpeg",
 				"-codec", "copy",
@@ -206,7 +206,7 @@ func TestStartInvalidSegmentTypeReturnsError(t *testing.T) {
 
 	videoStream := ioutil.NopCloser(strings.NewReader("totallyfakevideostream"))
 
-	mpegdashMuxer := Muxer{SegmentType: "badtype"}
+	mpegdashMuxer := Muxer{Options: Options{SegmentType: "badtype"}}
 	err := mpegdashMuxer.Mux(videoStream)
 
 	if err.Error() != "ffmpeg dash: invalid segment type" {

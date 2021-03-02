@@ -91,12 +91,14 @@ func main() {
 		}
 
 		muxer := hls.Muxer{
-			Directory:    hlsConfig.Directory,
-			Fps:          config.Video.Fps,
-			SegmentType:  hlsConfig.SegmentType,
-			SegmentTime:  hlsConfig.SegmentTime,
-			PlaylistSize: hlsConfig.PlaylistSize,
-			StorageSize:  hlsConfig.StorageSize,
+			Directory: hlsConfig.Directory,
+			Options: hls.Options{
+				Fps:          config.Video.Fps,
+				SegmentType:  hlsConfig.SegmentType,
+				SegmentTime:  hlsConfig.SegmentTime,
+				PlaylistSize: hlsConfig.PlaylistSize,
+				StorageSize:  hlsConfig.StorageSize,
+			},
 		}
 		server := newStaticServer(hlsConfig.Port, hlsConfig.Directory)
 		muxAndServe(*raspiStream, &muxer, server)
@@ -108,12 +110,14 @@ func main() {
 		}
 
 		muxer := dash.Muxer{
-			Directory:    dashConfig.Directory,
-			Fps:          config.Video.Fps,
-			SegmentType:  dashConfig.SegmentType,
-			SegmentTime:  dashConfig.SegmentTime,
-			PlaylistSize: dashConfig.PlaylistSize,
-			StorageSize:  dashConfig.StorageSize,
+			Directory: dashConfig.Directory,
+			Options: dash.Options{
+				Fps:          config.Video.Fps,
+				SegmentType:  dashConfig.SegmentType,
+				SegmentTime:  dashConfig.SegmentTime,
+				PlaylistSize: dashConfig.PlaylistSize,
+				StorageSize:  dashConfig.StorageSize,
+			},
 		}
 		server := newStaticServer(dashConfig.Port, dashConfig.Directory)
 		muxAndServe(*raspiStream, &muxer, server)

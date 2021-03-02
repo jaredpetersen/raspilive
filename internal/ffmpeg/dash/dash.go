@@ -9,22 +9,27 @@ import (
 	"strings"
 )
 
-// Muxer represents a video transformation operation being prepared or run.
+// Options represents ways that Ffmpeg may be configured to mux video to DASH.
 //
 // Ffmpeg will step in and use its own defaults if a value is not provided.
-type Muxer struct {
-	Directory    string
+type Options struct {
 	Fps          int    // Framerate of the output video
 	SegmentType  string // Format of the video segment
 	SegmentTime  int    // Segment length target duration in seconds
 	PlaylistSize int    // Maximum number of playlist entries
 	StorageSize  int    // Maximum number of unreferenced segments to keep on disk before removal
-	cmd          *exec.Cmd
+}
+
+// Muxer represents the DASH muxer.
+type Muxer struct {
+	Directory string
+	Options   Options
+	cmd       *exec.Cmd
 }
 
 var execCommand = exec.Command
 
-// Mux begins muxing the video stream to the HLS format.
+// Mux begins muxing the video stream to the DASH format.
 func (muxer *Muxer) Mux(video io.ReadCloser) error {
 	args := []string{
 		"-codec", "copy",
@@ -35,7 +40,7 @@ func (muxer *Muxer) Mux(video io.ReadCloser) error {
 		"-media_seg_name", "$Time$-$Number$.$ext$",
 	}
 
-	segmentType := strings.ToLower(muxer.SegmentType)
+	segmentType := strings.ToLower(muxer.Options.SegmentType)
 	if segmentType == "" || segmentType == "auto" {
 		args = append(args, "-dash_segment_type", "auto")
 	} else if segmentType == "mp4" {
@@ -46,20 +51,20 @@ func (muxer *Muxer) Mux(video io.ReadCloser) error {
 		return errors.New("ffmpeg dash: invalid segment type")
 	}
 
-	if muxer.Fps != 0 {
-		args = append(args, "-r", strconv.Itoa(muxer.Fps))
+	if muxer.Options.Fps != 0 {
+		args = append(args, "-r", strconv.Itoa(muxer.Options.Fps))
 	}
 
-	if muxer.SegmentTime != 0 {
-		args = append(args, "-seg_duration", strconv.Itoa(muxer.SegmentTime))
+	if muxer.Options.SegmentTime != 0 {
+		args = append(args, "-seg_duration", strconv.Itoa(muxer.Options.SegmentTime))
 	}
 
-	if muxer.PlaylistSize != 0 {
-		args = append(args, "-window_size", strconv.Itoa(muxer.PlaylistSize))
+	if muxer.Options.PlaylistSize != 0 {
+		args = append(args, "-window_size", strconv.Itoa(muxer.Options.PlaylistSize))
 	}
 
-	if muxer.StorageSize != 0 {
-		args = append(args, "-extra_window_size", strconv.Itoa(muxer.StorageSize))
+	if muxer.Options.StorageSize != 0 {
+		args = append(args, "-extra_window_size", strconv.Itoa(muxer.Options.StorageSize))
 	}
 
 	args = append(args, path.Join(muxer.Directory, "livestream.mpd"))

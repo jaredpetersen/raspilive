@@ -9,17 +9,22 @@ import (
 	"strings"
 )
 
-// Muxer represents the HLS muxer.
+// Options represents ways that Ffmpeg may be configured to mux video to HLS.
 //
 // Ffmpeg will step in and use its own defaults if a value is not provided.
-type Muxer struct {
-	Directory    string
+type Options struct {
 	Fps          int    // Framerate of the output video
 	SegmentType  string // Format of the video segment
 	SegmentTime  int    // Segment length target duration in seconds
 	PlaylistSize int    // Maximum number of playlist entries
 	StorageSize  int    // Maximum number of unreferenced segments to keep on disk before removal
-	cmd          *exec.Cmd
+}
+
+// Muxer represents the HLS muxer.
+type Muxer struct {
+	Directory string
+	Options   Options
+	cmd       *exec.Cmd
 }
 
 var execCommand = exec.Command
@@ -35,7 +40,7 @@ func (muxer *Muxer) Mux(video io.ReadCloser) error {
 	}
 	hlsFlags := []string{"second_level_segment_index"}
 
-	segmentType := strings.ToLower(muxer.SegmentType)
+	segmentType := strings.ToLower(muxer.Options.SegmentType)
 	if segmentType == "" || segmentType == "mpegts" {
 		args = append(
 			args,
@@ -50,21 +55,21 @@ func (muxer *Muxer) Mux(video io.ReadCloser) error {
 		return errors.New("ffmpeg dash: invalid segment type")
 	}
 
-	if muxer.Fps != 0 {
-		args = append(args, "-r", strconv.Itoa(muxer.Fps))
+	if muxer.Options.Fps != 0 {
+		args = append(args, "-r", strconv.Itoa(muxer.Options.Fps))
 	}
 
-	if muxer.SegmentTime != 0 {
-		args = append(args, "-hls_time", strconv.Itoa(muxer.SegmentTime))
+	if muxer.Options.SegmentTime != 0 {
+		args = append(args, "-hls_time", strconv.Itoa(muxer.Options.SegmentTime))
 		hlsFlags = append(hlsFlags, "split_by_time")
 	}
 
-	if muxer.PlaylistSize != 0 {
-		args = append(args, "-hls_list_size", strconv.Itoa(muxer.PlaylistSize))
+	if muxer.Options.PlaylistSize != 0 {
+		args = append(args, "-hls_list_size", strconv.Itoa(muxer.Options.PlaylistSize))
 	}
 
-	if muxer.StorageSize != 0 {
-		args = append(args, "-hls_delete_threshold", strconv.Itoa(muxer.StorageSize))
+	if muxer.Options.StorageSize != 0 {
+		args = append(args, "-hls_delete_threshold", strconv.Itoa(muxer.Options.StorageSize))
 		hlsFlags = append(hlsFlags, "delete_segments")
 	}
 
@@ -76,9 +81,7 @@ func (muxer *Muxer) Mux(video io.ReadCloser) error {
 	return muxer.cmd.Start()
 }
 
-// Wait blocks until the video stream is finished processing.
-//
-// The mux operation must have been started by Start.
+// Wait blocks until the video stream is finished processing by Mux.
 func (muxer *Muxer) Wait() error {
 	if muxer.cmd == nil {
 		return errors.New("ffmpeg hls: not started")

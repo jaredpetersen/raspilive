@@ -10,12 +10,14 @@ import (
 var execCommand = exec.Command
 
 // Options represents a Raspberry Pi camera video streamer.
+//
+// Raspivid will step in and provide its own defaults if a value is not provided.
 type Options struct {
-	Width          int
-	Height         int
-	Fps            int
-	HorizontalFlip bool
-	VerticalFlip   bool
+	Width          int  // Width of the video
+	Height         int  // Height of the video
+	Fps            int  // Framerate of the video
+	HorizontalFlip bool // Flip the video horizontally
+	VerticalFlip   bool // Flip the video vertically
 }
 
 // Stream represents a Raspberry Pi camera video streamer.

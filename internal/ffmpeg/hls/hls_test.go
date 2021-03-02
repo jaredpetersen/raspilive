@@ -58,7 +58,7 @@ func TestStart(t *testing.T) {
 			},
 		},
 		{
-			Muxer{Fps: 60},
+			Muxer{Options: Options{Fps: 60}},
 			[]string{
 				"ffmpeg",
 				"-codec", "copy",
@@ -74,7 +74,7 @@ func TestStart(t *testing.T) {
 			},
 		},
 		{
-			Muxer{SegmentType: "MpEgTs"},
+			Muxer{Options: Options{SegmentType: "MpEgTs"}},
 			[]string{
 				"ffmpeg",
 				"-codec", "copy",
@@ -89,7 +89,7 @@ func TestStart(t *testing.T) {
 			},
 		},
 		{
-			Muxer{SegmentType: "FmP4"},
+			Muxer{Options: Options{SegmentType: "FmP4"}},
 			[]string{
 				"ffmpeg",
 				"-codec", "copy",
@@ -104,7 +104,7 @@ func TestStart(t *testing.T) {
 			},
 		},
 		{
-			Muxer{SegmentTime: 2},
+			Muxer{Options: Options{SegmentTime: 2}},
 			[]string{
 				"ffmpeg",
 				"-codec", "copy",
@@ -120,7 +120,7 @@ func TestStart(t *testing.T) {
 			},
 		},
 		{
-			Muxer{PlaylistSize: 50},
+			Muxer{Options: Options{PlaylistSize: 50}},
 			[]string{
 				"ffmpeg",
 				"-codec", "copy",
@@ -136,7 +136,7 @@ func TestStart(t *testing.T) {
 			},
 		},
 		{
-			Muxer{StorageSize: 100},
+			Muxer{Options: Options{StorageSize: 100}},
 			[]string{
 				"ffmpeg",
 				"-codec", "copy",
@@ -152,7 +152,10 @@ func TestStart(t *testing.T) {
 			},
 		},
 		{
-			Muxer{Directory: "hls", Fps: 30, SegmentType: "fmp4", SegmentTime: 5, PlaylistSize: 25, StorageSize: 50},
+			Muxer{
+				Directory: "hls",
+				Options:   Options{Fps: 30, SegmentType: "fmp4", SegmentTime: 5, PlaylistSize: 25, StorageSize: 50},
+			},
 			[]string{
 				"ffmpeg",
 				"-codec", "copy",
@@ -201,7 +204,7 @@ func TestStartInvalidSegmentTypeReturnsError(t *testing.T) {
 
 	videoStream := ioutil.NopCloser(strings.NewReader("totallyfakevideostream"))
 
-	hlsMuxer := Muxer{SegmentType: "badtype"}
+	hlsMuxer := Muxer{Options: Options{SegmentType: "badtype"}}
 	err := hlsMuxer.Mux(videoStream)
 
 	if err.Error() != "ffmpeg dash: invalid segment type" {
