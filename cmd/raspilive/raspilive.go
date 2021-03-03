@@ -43,7 +43,6 @@ type HlsConfig struct {
 type DashConfig struct {
 	Port         int    `required:"true"`
 	Directory    string `default:"./camera"`
-	SegmentType  string // Segment video type
 	SegmentTime  int    // Segment length target duration in seconds
 	PlaylistSize int    // Maximum number of playlist entries
 	StorageSize  int    // Maximum number of unreferenced segments to keep on disk before removal
@@ -113,7 +112,6 @@ func main() {
 			Directory: dashConfig.Directory,
 			Options: dash.Options{
 				Fps:          config.Video.Fps,
-				SegmentType:  dashConfig.SegmentType,
 				SegmentTime:  dashConfig.SegmentTime,
 				PlaylistSize: dashConfig.PlaylistSize,
 				StorageSize:  dashConfig.StorageSize,
@@ -164,12 +162,12 @@ func mux(raspiStream raspivid.Stream, muxer Muxer) error {
 	wg.Add(1)
 
 	go func() {
-		log.Fatal(raspiStream.Wait())
+		err = raspiStream.Wait()
 		wg.Done()
 	}()
 
 	go func() {
-		log.Fatal(muxer.Wait())
+		err = muxer.Wait()
 		wg.Done()
 	}()
 

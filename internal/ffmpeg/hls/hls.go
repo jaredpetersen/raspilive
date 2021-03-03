@@ -33,26 +33,24 @@ var execCommand = exec.Command
 // Mux begins muxing the video stream to the HLS format.
 func (muxer *Muxer) Mux(video io.ReadCloser) error {
 	args := []string{
-		"-re",
 		"-i", "pipe:0",
 		"-codec", "copy",
 		"-f", "hls",
 		"-an",
-		"-strftime", "1",
 	}
-	hlsFlags := []string{"second_level_segment_index"}
+	hlsFlags := []string{}
 
 	segmentType := strings.ToLower(muxer.Options.SegmentType)
 	if segmentType == "" || segmentType == "mpegts" {
 		args = append(
 			args,
 			"-hls_segment_type", "mpegts",
-			"-hls_segment_filename", path.Join(muxer.Directory, "%s-%%d.ts"))
+			"-hls_segment_filename", path.Join(muxer.Directory, "raspilive-%03d.ts"))
 	} else if segmentType == "fmp4" {
 		args = append(
 			args,
 			"-hls_segment_type", "fmp4",
-			"-hls_segment_filename", path.Join(muxer.Directory, "%s-%%d.m4s"))
+			"-hls_segment_filename", path.Join(muxer.Directory, "raspilive-%d.m4s"))
 	} else {
 		return errors.New("ffmpeg dash: invalid segment type")
 	}
@@ -75,7 +73,11 @@ func (muxer *Muxer) Mux(video io.ReadCloser) error {
 		hlsFlags = append(hlsFlags, "delete_segments")
 	}
 
-	args = append(args, "-hls_flags", strings.Join(hlsFlags, "+"), path.Join(muxer.Directory, "livestream.m3u8"))
+	if len(hlsFlags) > 0 {
+		args = append(args, "-hls_flags", strings.Join(hlsFlags, "+"), path.Join(muxer.Directory, "livestream.m3u8"))
+	}
+
+	args = append(args, path.Join(muxer.Directory, "livestream.m3u8"))
 
 	muxer.cmd = execCommand("ffmpeg", args...)
 	muxer.cmd.Stdin = video

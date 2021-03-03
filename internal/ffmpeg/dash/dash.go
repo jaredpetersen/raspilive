@@ -7,18 +7,16 @@ import (
 	"os/exec"
 	"path"
 	"strconv"
-	"strings"
 )
 
 // Options represents ways that Ffmpeg may be configured to mux video to DASH.
 //
 // Ffmpeg will step in and use its own defaults if a value is not provided.
 type Options struct {
-	Fps          int    // Framerate of the output video
-	SegmentType  string // Format of the video segment
-	SegmentTime  int    // Segment length target duration in seconds
-	PlaylistSize int    // Maximum number of playlist entries
-	StorageSize  int    // Maximum number of unreferenced segments to keep on disk before removal
+	Fps          int // Framerate of the output video
+	SegmentTime  int // Segment length target duration in seconds
+	PlaylistSize int // Maximum number of playlist entries
+	StorageSize  int // Maximum number of unreferenced segments to keep on disk before removal
 }
 
 // Muxer represents the DASH muxer.
@@ -33,25 +31,15 @@ var execCommand = exec.Command
 // Mux begins muxing the video stream to the DASH format.
 func (muxer *Muxer) Mux(video io.ReadCloser) error {
 	args := []string{
-		"-re",
 		"-i", "pipe:0",
 		"-codec", "copy",
 		"-f", "dash",
 		"-an",
-		"-init_seg_name", "init.$ext$",
-		"-media_seg_name", "$Time$-$Number$.$ext$",
+		"-dash_segment_type", "mp4",
+		"-media_seg_name", "raspilive-$Number$.m4s",
+		"-init_seg_name", "init.m4s",
 	}
 
-	segmentType := strings.ToLower(muxer.Options.SegmentType)
-	if segmentType == "mp4" {
-		args = append(args, "-dash_segment_type", "mp4")
-	} else if segmentType == "webm" {
-		args = append(args, "-dash_segment_type", "webm")
-	} else if segmentType != "" && segmentType != "auto" {
-		return errors.New("ffmpeg dash: invalid segment type")
-	}
-
-	// TODO this is probably unecessary since we rely on input FPS
 	if muxer.Options.Fps != 0 {
 		args = append(args, "-r", strconv.Itoa(muxer.Options.Fps))
 	}
