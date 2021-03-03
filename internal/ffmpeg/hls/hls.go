@@ -74,7 +74,7 @@ func (muxer *Muxer) Mux(video io.ReadCloser) error {
 	}
 
 	if len(hlsFlags) > 0 {
-		args = append(args, "-hls_flags", strings.Join(hlsFlags, "+"), path.Join(muxer.Directory, "livestream.m3u8"))
+		args = append(args, "-hls_flags", strings.Join(hlsFlags, "+"))
 	}
 
 	args = append(args, path.Join(muxer.Directory, "livestream.m3u8"))
