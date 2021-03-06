@@ -12,6 +12,7 @@ jobs:
       - name: Install dependencies
         run: |
           go install ./...
+          go get -u golang.org/x/lint/golint
       - name: Analyze code
         run: |
           golint ./...
