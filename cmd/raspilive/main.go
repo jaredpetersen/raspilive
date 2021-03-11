@@ -1,6 +1,8 @@
 package main
 
 import (
+	"github.com/jaredpetersen/raspilive/cmd/raspilive/dash"
+	"github.com/jaredpetersen/raspilive/cmd/raspilive/hls"
 	"github.com/spf13/cobra"
 )
 
@@ -17,8 +19,8 @@ func main() {
 		Version: "1.0.0",
 	}
 
-	rootCmd.AddCommand(HlsCmd)
-	rootCmd.AddCommand(DashCmd)
+	rootCmd.AddCommand(hls.Cmd)
+	rootCmd.AddCommand(dash.Cmd)
 
 	rootCmd.Execute()
 }
