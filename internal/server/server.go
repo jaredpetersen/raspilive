@@ -18,7 +18,7 @@ func NewStatic(port int, directory string) (*http.Server, error) {
 	}
 
 	router := http.NewServeMux()
-	router.Handle("/camera", http.FileServer(http.Dir(directory)))
+	router.Handle("/camera/", http.StripPrefix("/camera", http.FileServer(http.Dir(directory))))
 
 	server := http.Server{Addr: ":" + strconv.Itoa(port), Handler: router}
 
