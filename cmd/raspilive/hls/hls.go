@@ -37,27 +37,27 @@ var Cmd = &cobra.Command{
 func init() {
 	cfg := Cfg{}
 
-	Cmd.Flags().IntVar(&cfg.Width, "width", 1920, "Video width")
+	Cmd.Flags().IntVar(&cfg.Width, "width", 1920, "video width")
 
-	Cmd.Flags().IntVar(&cfg.Height, "height", 1080, "Video height")
+	Cmd.Flags().IntVar(&cfg.Height, "height", 1080, "video height")
 
-	Cmd.Flags().IntVar(&cfg.Fps, "fps", 30, "Video framerate")
+	Cmd.Flags().IntVar(&cfg.Fps, "fps", 30, "video framerate")
 
-	Cmd.Flags().BoolVar(&cfg.HorizontalFlip, "horizontal-flip", false, "Horizontally flip video")
+	Cmd.Flags().BoolVar(&cfg.HorizontalFlip, "horizontal-flip", false, "horizontally flip video")
 
-	Cmd.Flags().BoolVar(&cfg.VerticalFlip, "vertical-flip", false, "Vertically flip video")
+	Cmd.Flags().BoolVar(&cfg.VerticalFlip, "vertical-flip", false, "vertically flip video")
 
-	Cmd.Flags().IntVar(&cfg.Port, "port", 0, "Static file server port (required)")
+	Cmd.Flags().IntVar(&cfg.Port, "port", 0, "static file server port (required)")
 	Cmd.MarkFlagRequired("port")
 
-	Cmd.Flags().StringVar(&cfg.Directory, "directory", "", "Static file server directory (required)")
+	Cmd.Flags().StringVar(&cfg.Directory, "directory", "", "static file server directory (required)")
 	Cmd.MarkFlagRequired("directory")
 
-	Cmd.Flags().IntVar(&cfg.SegmentTime, "segment-time", 0, "Segment length target duration in seconds")
+	Cmd.Flags().IntVar(&cfg.SegmentTime, "segment-time", 0, "segment length target duration in seconds")
 
-	Cmd.Flags().IntVar(&cfg.PlaylistSize, "playlist-size", 0, "Maximum number of playlist entries")
+	Cmd.Flags().IntVar(&cfg.PlaylistSize, "playlist-size", 0, "maximum number of playlist entries")
 
-	Cmd.Flags().IntVar(&cfg.StorageSize, "storage-size", 0, "Maximum number of unreferenced segments to keep on disk before removal")
+	Cmd.Flags().IntVar(&cfg.StorageSize, "storage-size", 0, "maximum number of unreferenced segments to keep on disk before removal")
 
 	Cmd.Flags().SortFlags = false
 
