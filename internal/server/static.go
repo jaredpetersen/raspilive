@@ -11,6 +11,9 @@ import (
 	"time"
 )
 
+// ErrInvalidDirectory indicates that the provided directory does not exist
+var ErrInvalidDirectory = errors.New("directory does not exist")
+
 // Static is a static file server.
 //
 // Files may be accessed via the route `/camera`.
@@ -34,7 +37,7 @@ func (stcsrv *Static) ListenAndServe() error {
 
 	_, err := os.Stat(dir)
 	if os.IsNotExist(err) {
-		return errors.New("directory does not exist")
+		return ErrInvalidDirectory
 	}
 
 	if err := stcsrv.listen(); err != nil {

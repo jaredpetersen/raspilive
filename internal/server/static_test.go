@@ -13,8 +13,6 @@ import (
 	"time"
 )
 
-// It's important to run these tests with a timeout since we don't want to deadlock
-
 // Generated cert and key via the crypto/tls package:
 //   go run generate_cert.go  --rsa-bits 1024 --host 127.0.0.1,::1,example.com --ca --start-date "Jan 1 00:00:00 1970" --duration=1000000h
 var tlsCert = []byte(`-----BEGIN CERTIFICATE-----
