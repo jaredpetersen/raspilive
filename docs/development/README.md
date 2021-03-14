@@ -17,24 +17,7 @@ go test ./... -v
 go test ./... -cover
 ```
 
-Copy files from localhost to the Raspberry Pi:
+Copy binary from localhost to the Raspberry Pi:
 ```zsh
-scp <file_path> pi@raspberrypi:<remote_dir>
-scp -r <local_dir> pi@raspberrypi:<remote_dir>
-```
-
-Copy files from the Raspberry Pi to localhost:
-```zsh
-scp pi@raspberrypi:<file_path> .
-scp -r pi@raspberrypi:<remote_dir> <local_dir>
-```
-
-Building Debian package:
-```zsh
-dpkg-deb --build raspilive-1.0-0_armhf.deb
-```
-
-Installing Debian package:
-```zsh
-sudo apt install ./raspilive-1.0-0_armhf.deb
+scp raspilive pi@raspberrypi:/home/pi
 ```
