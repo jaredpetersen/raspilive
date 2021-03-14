@@ -2,7 +2,6 @@ package hls
 
 import (
 	"errors"
-	"log"
 	"os"
 	"os/signal"
 	"time"
@@ -10,6 +9,7 @@ import (
 	"github.com/jaredpetersen/raspilive/internal/ffmpeg/hls"
 	"github.com/jaredpetersen/raspilive/internal/raspivid"
 	"github.com/jaredpetersen/raspilive/internal/server"
+	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )
 
@@ -85,10 +85,10 @@ func streamHls(cfg Cfg) {
 	go func() {
 		err := srv.ListenAndServe()
 		if err != nil && errors.Is(err, server.ErrInvalidDirectory) {
-			log.Fatal("Directory does not exist")
+			log.Fatal().Msg("Directory does not exist")
 		}
 		if err != nil {
-			log.Fatal("Encountered an error serving video")
+			log.Fatal().Msg("Encountered an error serving video")
 		}
 		stop <- struct{}{}
 	}()
@@ -96,7 +96,7 @@ func streamHls(cfg Cfg) {
 	// Stream video
 	go func() {
 		if err := mux(raspiStream, muxer); err != nil {
-			log.Fatal("Encountered an error muxing video")
+			log.Fatal().Msg("Encountered an error muxing video")
 		}
 		stop <- struct{}{}
 	}()
@@ -104,7 +104,7 @@ func streamHls(cfg Cfg) {
 	// Wait for a stop signal
 	<-stop
 
-	log.Println("Shutting down")
+	log.Info().Msg("Shutting down")
 
 	raspiStream.Video.Close()
 	srv.Shutdown(serverShutdownDeadline)
@@ -121,7 +121,7 @@ func newRaspiStream(cfg Cfg) *raspivid.Stream {
 
 	raspiStream, err := raspivid.NewStream(raspiOptions)
 	if err != nil {
-		log.Fatal("Encountered an error streaming video from the Raspberry Pi Camera Module")
+		log.Fatal().Msg("Encountered an error streaming video from the Raspberry Pi Camera Module")
 	}
 
 	return raspiStream

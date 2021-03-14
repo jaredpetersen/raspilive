@@ -3,12 +3,13 @@ package server
 import (
 	"context"
 	"errors"
-	"log"
 	"net"
 	"net/http"
 	"os"
 	"strconv"
 	"time"
+
+	"github.com/rs/zerolog/log"
 )
 
 // ErrInvalidDirectory indicates that the provided directory does not exist
@@ -66,7 +67,7 @@ func (stcsrv *Static) serve() error {
 
 	stcsrv.server = http.Server{Handler: router}
 
-	log.Println("Server started on port", stcsrv.Port)
+	log.Info().Int("port", stcsrv.Port).Msg("Server started")
 
 	var err error
 	if stcsrv.Cert != "" && stcsrv.Key != "" {

@@ -3,9 +3,10 @@ package raspivid
 import (
 	"errors"
 	"io"
-	"log"
 	"os/exec"
 	"strconv"
+
+	"github.com/rs/zerolog/log"
 )
 
 var execCommand = exec.Command
@@ -67,7 +68,7 @@ func (strm *Stream) Start() error {
 		return errors.New("raspivid: not created")
 	}
 
-	log.Println("raspivid", strm.cmd.String())
+	log.Debug().Str("cmd", strm.cmd.String())
 
 	return strm.cmd.Start()
 }
