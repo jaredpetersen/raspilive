@@ -24,9 +24,19 @@ type Static struct {
 }
 
 // ListenAndServe begins listening on the configured port and serving static files.
-//
-// ListenAndServe always returns a non-nil error. When the server closes, this will be http.ErrServerClosed.
 func (stcsrv *Static) ListenAndServe() error {
+	var dir string
+	if stcsrv.Directory == "" {
+		dir = "."
+	} else {
+		dir = stcsrv.Directory
+	}
+
+	_, err := os.Stat(dir)
+	if os.IsNotExist(err) {
+		return errors.New("directory does not exist")
+	}
+
 	if err := stcsrv.listen(); err != nil {
 		return err
 	}
@@ -35,7 +45,7 @@ func (stcsrv *Static) ListenAndServe() error {
 }
 
 func (stcsrv *Static) listen() error {
-	// If a Port is not chose, listener will choose the next available port for us
+	// If a Port is not chosen, listener will choose the next available port for us
 	listener, err := net.Listen("tcp", ":"+strconv.Itoa(stcsrv.Port))
 	if err != nil {
 		return err
@@ -48,19 +58,17 @@ func (stcsrv *Static) listen() error {
 }
 
 func (stcsrv *Static) serve() error {
-	_, err := os.Stat(stcsrv.Directory)
-	if os.IsNotExist(err) {
-		return errors.New("directory does not exist")
-	}
-
 	router := http.NewServeMux()
 	router.Handle("/camera/", http.StripPrefix("/camera", http.FileServer(http.Dir(stcsrv.Directory))))
 
+	stcsrv.server = http.Server{Handler: router}
+
 	log.Println("Server started on port", stcsrv.Port)
+
+	var err error
 	if stcsrv.Cert != "" && stcsrv.Key != "" {
 		err = stcsrv.server.ServeTLS(stcsrv.listener, stcsrv.Cert, stcsrv.Key)
 	} else {
-		stcsrv.server = http.Server{Handler: router}
 		err = stcsrv.server.Serve(stcsrv.listener)
 	}
 
