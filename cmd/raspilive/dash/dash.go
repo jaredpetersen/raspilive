@@ -59,7 +59,7 @@ func init() {
 
 	Cmd.Flags().StringVar(&cfg.TLSKey, "tls-key", "", "static file server TLS key")
 
-	Cmd.Flags().IntVar(&cfg.SegmentTime, "segment-time", 0, "segment length target duration in seconds")
+	Cmd.Flags().IntVar(&cfg.SegmentTime, "segment-time", 0, "target segment duration in seconds")
 
 	Cmd.Flags().IntVar(&cfg.PlaylistSize, "playlist-size", 0, "maximum number of playlist entries")
 
