@@ -1,5 +1,5 @@
 # raspilive
-Raspilive is a small command-line application that streams live video from the Raspberry Pi Camera module to the web
+raspilive is a small command-line application that streams live video from the Raspberry Pi Camera module to the web
 
 ## Usage
 ```
@@ -107,15 +107,15 @@ Maximum number of playlist entries.
 Maximum number of unreferenced segments to keep on disk before removal.
 
 ## Installation
-Raspilive uses [raspivid](https://www.raspberrypi.org/documentation/usage/camera/raspicam/raspivid.md) to operate the
+raspilive uses [raspivid](https://www.raspberrypi.org/documentation/usage/camera/raspicam/raspivid.md) to operate the
 Raspberry Pi Camera Module. This is already available on the Raspbian operating system and can be enabled via 
 [raspi-config](https://www.raspberrypi.org/documentation/configuration/raspi-config.md).
 
-Raspilive also uses [Ffmpeg](https://ffmpeg.org/), a prominent video conversion command line utility, to process the
+raspilive also uses [Ffmpeg](https://ffmpeg.org/), a prominent video conversion command line utility, to process the
 streaming video that the Raspberry Pi Camera Module outputs. Version 4.0 or higher is required.
 ```zsh
 sudo apt-get install ffmpeg
 ```
 
-Download the latest version of Raspilive from the [Releases page](https://github.com/jaredpetersen/raspi-live/releases).
+Download the latest version of raspilive from the [Releases page](https://github.com/jaredpetersen/raspi-live/releases).
 All of the release binaries are compiled for ARM 6 and are compatible with Raspberry Pi.
