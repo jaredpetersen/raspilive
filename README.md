@@ -23,7 +23,7 @@ Flags:
 ### HLS
 [HLS](https://en.wikipedia.org/wiki/HTTP_Live_Streaming) is a video streaming format that works by splitting the video
 into small consummable segments that are arranged in a continuously changing playlist of files. The client reads from
-the playlist and downloads the video segments as needed. DASH requires a static file server to serve all of these files
+the playlist and downloads the video segments as needed. HLS requires a static file server to serve all of these files
 and raspilive provides this out of the box automatically.
 
 #### Flags
@@ -47,6 +47,10 @@ Static file server port. Finds an available port if one is not specified.
 
 ##### --directory string
 Static file server directory. Defaults to the current directory.
+
+Those concerned about the long-term health of their Raspberry Pi's SD card may opt to point raspilive to a RAMDisk so
+that the files are only stored in memory. However, this also means that you will be unable to recover any of the 
+footage if the power is cut.
 
 ##### --tls-cert string
 Static file server TLS certificate.
@@ -90,6 +94,10 @@ Static file server port. Finds an available port if one is not specified.
 
 ##### --directory string
 Static file server directory. Defaults to the current directory.
+
+Those concerned about the long-term health of their Raspberry Pi's SD card may opt to point raspilive to a RAMDisk so
+that the files are only stored in memory. However, this also means that you will be unable to recover any of the 
+footage if the power is cut.
 
 ##### --tls-cert string
 Static file server TLS certificate.
