@@ -9,6 +9,8 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/justinas/alice"
+	"github.com/rs/zerolog/hlog"
 	"github.com/rs/zerolog/log"
 )
 
@@ -62,8 +64,24 @@ func (stcsrv *Static) listen() error {
 }
 
 func (stcsrv *Static) serve() error {
+	middlewareChain := alice.New()
+	middlewareChain = middlewareChain.Append(hlog.NewHandler(log.Logger))
+	middlewareChain = middlewareChain.Append(hlog.AccessHandler(func(r *http.Request, status, size int, duration time.Duration) {
+		hlog.FromRequest(r).
+			Info().
+			Str("method", r.Method).
+			Stringer("url", r.URL).
+			Int("status", status).
+			Int("size", size).
+			Dur("duration", duration).
+			Msg("Access")
+	}))
+	middlewareChain = middlewareChain.Append(hlog.RemoteAddrHandler("ip"))
+	middlewareChain = middlewareChain.Append(hlog.UserAgentHandler("user_agent"))
+	middlewareChain = middlewareChain.Append(hlog.RefererHandler("referer"))
+
 	router := http.NewServeMux()
-	router.Handle("/camera/", http.StripPrefix("/camera", http.FileServer(http.Dir(stcsrv.Directory))))
+	router.Handle("/camera/", middlewareChain.Then(http.StripPrefix("/camera", http.FileServer(http.Dir(stcsrv.Directory)))))
 
 	stcsrv.server = http.Server{Handler: router}
 
@@ -81,6 +99,13 @@ func (stcsrv *Static) serve() error {
 	}
 
 	return nil
+}
+
+func logMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Our middleware logic goes here...
+		next.ServeHTTP(w, r)
+	})
 }
 
 // Shutdown gracefully shuts down the server with a deadline.

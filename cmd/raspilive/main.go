@@ -22,6 +22,7 @@ type VideoCfg struct {
 
 func main() {
 	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: time.RFC3339})
+
 	cobra.EnableCommandSorting = false
 
 	var debug bool
