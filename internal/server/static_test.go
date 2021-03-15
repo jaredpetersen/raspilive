@@ -3,6 +3,7 @@ package server
 import (
 	"bytes"
 	"crypto/tls"
+	"errors"
 	"io"
 	"io/ioutil"
 	"net"
@@ -171,7 +172,7 @@ func TestListenAndServeReturnsErrForInvalidDirectory(t *testing.T) {
 	err := srv.ListenAndServe()
 	defer srv.Shutdown(0)
 
-	if err.Error() != "directory does not exist" {
+	if !errors.Is(err, ErrInvalidDirectory) {
 		t.Error("ListenAndServe failed to return an error for an invalid directory:", err)
 	}
 }
