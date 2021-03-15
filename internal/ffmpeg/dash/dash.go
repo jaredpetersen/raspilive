@@ -6,8 +6,6 @@ import (
 	"os/exec"
 	"path"
 	"strconv"
-
-	"github.com/rs/zerolog/log"
 )
 
 // Options represents ways that Ffmpeg may be configured to mux video to DASH.
@@ -62,8 +60,6 @@ func (muxer *Muxer) Mux(video io.ReadCloser) error {
 	muxer.cmd = execCommand("ffmpeg", args...)
 	muxer.cmd.Stdin = video
 
-	log.Debug().Str("cmd", muxer.cmd.String())
-
 	return muxer.cmd.Start()
 }
 
@@ -76,4 +72,15 @@ func (muxer *Muxer) Wait() error {
 	}
 
 	return muxer.cmd.Wait()
+}
+
+func (muxer *Muxer) String() string {
+	var cmdStr string
+	if muxer.cmd == nil {
+		cmdStr = ""
+	} else {
+		cmdStr = muxer.cmd.String()
+	}
+
+	return cmdStr
 }

@@ -5,8 +5,6 @@ import (
 	"io"
 	"os/exec"
 	"strconv"
-
-	"github.com/rs/zerolog/log"
 )
 
 var execCommand = exec.Command
@@ -68,8 +66,6 @@ func (strm *Stream) Start() error {
 		return errors.New("raspivid: not created")
 	}
 
-	log.Debug().Str("cmd", strm.cmd.String())
-
 	return strm.cmd.Start()
 }
 
@@ -85,4 +81,15 @@ func (strm *Stream) Wait() error {
 	}
 
 	return strm.cmd.Wait()
+}
+
+func (strm *Stream) String() string {
+	var cmdStr string
+	if strm.cmd == nil {
+		cmdStr = ""
+	} else {
+		cmdStr = strm.cmd.String()
+	}
+
+	return cmdStr
 }

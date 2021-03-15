@@ -164,14 +164,20 @@ func mux(raspiStream *raspivid.Stream, muxer *dash.Muxer) error {
 	if err := muxer.Mux(raspiStream.Video); err != nil {
 		return err
 	}
+	log.Debug().Str("cmd", muxer.String()).Msg("Started ffmpeg muxer")
+
 	if err := raspiStream.Start(); err != nil {
 		return err
 	}
+	log.Debug().Str("cmd", raspiStream.String()).Msg("Started raspivid")
+
 	if err := muxer.Wait(); err != nil {
 		return err
 	}
+
 	if err := raspiStream.Wait(); err != nil {
 		return err
 	}
+
 	return nil
 }
