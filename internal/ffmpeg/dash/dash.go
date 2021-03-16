@@ -74,7 +74,7 @@ func (muxer *Muxer) Wait() error {
 	err := muxer.cmd.Wait()
 
 	// Ignore 255 status -- just indicates that we exited early
-	if err.Error() == "exit status 255" {
+	if err != nil && err.Error() == "exit status 255" {
 		err = nil
 	}
 
