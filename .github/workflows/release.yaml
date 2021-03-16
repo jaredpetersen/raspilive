@@ -1,0 +1,43 @@
+name: Release
+on:
+  push:
+    branches:
+      - main
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up GO
+        uses: actions/setup-go@v2
+        with:
+          go-version: '1.16'
+      - name: Install dependencies
+        run: |
+          go install ./...
+          go get -u golang.org/x/lint/golint
+      - name: Build
+        run: env GOOS=linux GOARCH=arm GOARM=6 go build ./cmd/...
+      - name: Analyze code
+        run: |
+          golint ./...
+          go vet ./...
+      - name: Test
+        run: go test ./... -cover -timeout 1m
+      - name: Get Changelog
+        id: changelog
+        uses: mindsers/changelog-reader-action@v2
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.changelog.outputs.version }}
+          name: ${{ steps.changelog.outputs.version }}
+          body: ${{ steps.changelog_reader.outputs.changes }}
+          draft: false
+          prerelease: false
+          files: |
+            raspilive
+            README.md
+            LICENSE
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
