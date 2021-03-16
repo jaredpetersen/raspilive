@@ -1,5 +1,5 @@
 # raspilive
-raspilive is a small command-line application that streams live video from the Raspberry Pi Camera module to the web
+📷 raspilive is a small command-line application that streams live video from the Raspberry Pi Camera module to the web
 
 ## Usage
 ```
