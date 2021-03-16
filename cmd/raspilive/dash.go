@@ -41,11 +41,11 @@ func newDashCmd(video VideoCfg) *cobra.Command {
 
 	cmd.Flags().StringVar(&cfg.TLSKey, "tls-key", "", "static file server TLS key")
 
-	cmd.Flags().IntVar(&cfg.SegmentTime, "segment-time", 0, "target segment duration in seconds")
+	cmd.Flags().IntVar(&cfg.SegmentTime, "segment-time", 2, "target segment duration in seconds")
 
-	cmd.Flags().IntVar(&cfg.PlaylistSize, "playlist-size", 0, "maximum number of playlist entries")
+	cmd.Flags().IntVar(&cfg.PlaylistSize, "playlist-size", 10, "maximum number of playlist entries")
 
-	cmd.Flags().IntVar(&cfg.StorageSize, "storage-size", 0, "maximum number of unreferenced segments to keep on disk before removal")
+	cmd.Flags().IntVar(&cfg.StorageSize, "storage-size", 1, "maximum number of unreferenced segments to keep on disk before removal")
 
 	cmd.Flags().SortFlags = false
 

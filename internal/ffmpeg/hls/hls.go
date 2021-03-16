@@ -90,7 +90,14 @@ func (muxer *Muxer) Wait() error {
 		return errors.New("ffmpeg hls: not started")
 	}
 
-	return muxer.cmd.Wait()
+	err := muxer.cmd.Wait()
+
+	// Ignore 255 status -- just indicates that we exited early
+	if err.Error() == "exit status 255" {
+		err = nil
+	}
+
+	return err
 }
 
 func (muxer *Muxer) String() string {
