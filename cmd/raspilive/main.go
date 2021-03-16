@@ -42,8 +42,8 @@ func main() {
 	rootCmd.AddCommand(newHlsCmd(video))
 	rootCmd.AddCommand(newDashCmd(video))
 
-	rootCmd.PersistentFlags().IntVar(&video.Width, "width", 1920, "video width")
-	rootCmd.PersistentFlags().IntVar(&video.Height, "height", 1080, "video height")
+	rootCmd.PersistentFlags().IntVar(&video.Width, "width", 1280, "video width")
+	rootCmd.PersistentFlags().IntVar(&video.Height, "height", 720, "video height")
 	rootCmd.PersistentFlags().IntVar(&video.Fps, "fps", 30, "video framerate")
 	rootCmd.PersistentFlags().BoolVar(&video.HorizontalFlip, "horizontal-flip", false, "horizontally flip video")
 	rootCmd.PersistentFlags().BoolVar(&video.VerticalFlip, "vertical-flip", false, "vertically flip video")

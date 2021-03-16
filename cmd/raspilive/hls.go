@@ -2,6 +2,9 @@ package main
 
 import (
 	"errors"
+	"fmt"
+	"os"
+	"strings"
 
 	"github.com/jaredpetersen/raspilive/internal/ffmpeg/hls"
 	"github.com/jaredpetersen/raspilive/internal/raspivid"
@@ -17,9 +20,10 @@ type HlsCfg struct {
 	Directory    string
 	TLSCert      string
 	TLSKey       string
-	SegmentTime  int // Segment length target duration in seconds
-	PlaylistSize int // Maximum number of playlist entries
-	StorageSize  int // Maximum number of unreferenced segments to keep on disk before removal
+	SegmentType  string // Format of the video segment
+	SegmentTime  int    // Segment length target duration in seconds
+	PlaylistSize int    // Maximum number of playlist entries
+	StorageSize  int    // Maximum number of unreferenced segments to keep on disk before removal
 }
 
 func newHlsCmd(video VideoCfg) *cobra.Command {
@@ -34,12 +38,15 @@ func newHlsCmd(video VideoCfg) *cobra.Command {
 	}
 
 	cmd.Flags().IntVar(&cfg.Port, "port", 0, "static file server port")
+	cmd.MarkFlagRequired("port")
 
 	cmd.Flags().StringVar(&cfg.Directory, "directory", "", "static file server directory")
 
 	cmd.Flags().StringVar(&cfg.TLSCert, "tls-cert", "", "static file server TLS certificate")
 
-	cmd.Flags().StringVar(&cfg.TLSKey, "tls-key", "", "static file server TLS key")
+	cmd.Flags().StringVar(&cfg.TLSKey, "tls-key", "ff", "static file server TLS key")
+
+	cmd.Flags().StringVar(&cfg.SegmentType, "segment-type", "", "format of the video segments (valid [\"mpegts\", \"fmp4\"], default \"mpegts\")")
 
 	cmd.Flags().IntVar(&cfg.SegmentTime, "segment-time", 0, "target segment duration in seconds")
 
@@ -53,7 +60,29 @@ func newHlsCmd(video VideoCfg) *cobra.Command {
 		streamHls(cfg)
 	}
 
+	cmd.PreRun = func(cmd *cobra.Command, args []string) {
+		isValidCfg := isValidHlsCfg(cfg)
+		if !isValidCfg {
+			cmd.Usage()
+			os.Exit(1)
+		}
+	}
+
 	return cmd
+}
+
+func isValidHlsCfg(cfg HlsCfg) bool {
+	isValidCfg := true
+
+	segmentType := strings.ToLower(cfg.SegmentType)
+	validSegmentType := segmentType == "" || segmentType == "mpegts" || segmentType == "fmp4"
+
+	if !validSegmentType {
+		fmt.Printf("Error: invalid value \"%s\" for flag \"segment-type\"\n", cfg.SegmentType)
+		isValidCfg = false
+	}
+
+	return isValidCfg
 }
 
 func streamHls(cfg HlsCfg) {
