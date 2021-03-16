@@ -58,14 +58,17 @@ Static file server TLS certificate.
 ##### --tls-key string
 Static file server TLS key.
 
+##### --segment-type string
+Format of the video segments. Valid values include `mpegts` and `fmp4`. Defaults to `mpegts`.
+
 ##### --segment-time int
-Target segment duration in seconds.
+Target segment duration in seconds. Defaults to `2`.
 
 ##### --playlist-size int
-Maximum number of playlist entries.
+Maximum number of playlist entries. Defaults to `10`.
 
 ##### --storage-size int
-Maximum number of unreferenced segments to keep on disk before removal.
+Maximum number of unreferenced segments to keep on disk before removal. Defaults to `1`.
 
 ### DASH
 [DASH](https://en.wikipedia.org/wiki/Dynamic_Adaptive_Streaming_over_HTTP), also known as MPEG-DASH, is a video
@@ -106,13 +109,13 @@ Static file server TLS certificate.
 Static file server TLS key.
 
 ##### --segment-time int
-Target segment duration in seconds.
+Target segment duration in seconds. Defaults to `2`.
 
 ##### --playlist-size int
-Maximum number of playlist entries.
+Maximum number of playlist entries. Defaults to `10`.
 
 ##### --storage-size int
-Maximum number of unreferenced segments to keep on disk before removal.
+Maximum number of unreferenced segments to keep on disk before removal. Defaults to `1`.
 
 ## Installation
 raspilive uses [raspivid](https://www.raspberrypi.org/documentation/usage/camera/raspicam/raspivid.md) to operate the
