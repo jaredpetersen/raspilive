@@ -72,7 +72,7 @@ produced content by starting a static file server.
 
 DASH effectively utilizes the same mechanism for streaming video as HLS. The video is split into small segments and
 listed in a changing playlist file. Clients download the playlist and the videos listed in it to piece the video
-together seamlessly. And just like HLS, it's an inherently latent method of streaming video.
+together seamlessly.
 
 ```
 Stream video using DASH
