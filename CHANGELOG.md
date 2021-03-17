@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.0.1] - 2020-03-17
 ### Fixed
-- Log level defaults to INFO instead of DEBUG
+- Log level updated to default to INFO instead of DEBUG
 - HLS `--segment-type` respects the value `fmp4`
 - Video options are respected
 
