@@ -36,7 +36,7 @@ streaming format and serves the produced content by starting a static file serve
 If you're not familiar with HLS, the technology works by splitting the video stream into small, consumable segments.
 These segments are arranged into a constantly updating playlist of files. Clients periodically read these playlists,
 download the listed videos, and queue up the segments to produce a seamless playback experience.
-[Twitch uses it](https://blog.twitch.tv/en/2017/10/10/live-video-transmuxing-transcoding-f-fmpeg-vs-twitch-transcoder-part-i-489c1c125f28/)
+[Twitch uses it](https://blog.twitch.tv/en/2015/12/18/twitch-engineering-an-introduction-and-overview-a23917b71a25/)
 to distribute streaming video to all of its viewers.
 
 ```
