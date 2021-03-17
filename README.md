@@ -29,22 +29,22 @@ Use "raspilive [command] --help" for more information about a command.
 ```
 
 ### Global Flags
-##### --width int
+**--width int**
 Video width. Defaults to 1920.
 
-##### --height int
+**--height int**
 Video height. Defaults to 1080.
 
-##### --fps int
+**--fps int**
 Video framerate. Defaults to 30.
 
-##### --horizontal-flip
+**--horizontal-flip**
 Horizontally flip the video.
 
-##### --vertical-flip
+**--vertical-flip**
 Vertically flip the video.
 
-##### --port int
+**--port int**
 Static file server port. Finds an available port if one is not specified.
 
 ### Commands
@@ -55,29 +55,29 @@ the playlist and downloads the video segments as needed. HLS requires a static f
 and raspilive provides this out of the box automatically.
 
 ##### Flags
-###### --directory string
+**--directory string**
 Static file server directory. Defaults to the current directory.
 
 Those concerned about the long-term health of their Raspberry Pi's SD card may opt to point raspilive to a RAMDisk so
 that the files are only stored in memory. However, this also means that you will be unable to recover any of the 
 footage if the power is cut.
 
-###### --tls-cert string
+**--tls-cert string**
 Static file server TLS certificate.
 
-###### --tls-key string
+**--tls-key string**
 Static file server TLS key.
 
-###### --segment-type string
+**--segment-type string**
 Format of the video segments. Valid values include `mpegts` and `fmp4`. Defaults to `mpegts`.
 
-###### --segment-time int
+**--segment-time int**
 Target segment duration in seconds. Defaults to `2`.
 
-###### --playlist-size int
+**--playlist-size int**
 Maximum number of playlist entries. Defaults to `10`.
 
-###### --storage-size int
+**--storage-size int**
 Maximum number of unreferenced segments to keep on disk before removal. Defaults to `1`.
 
 #### DASH
@@ -87,29 +87,29 @@ changing playlist of files. The client reads from the playlist and downloads the
 requires a static file server to serve all of these files and raspilive provides this out of the box automatically.
 
 ##### Flags
-###### --port int
+**--port int**
 Static file server port. Finds an available port if one is not specified.
 
-###### --directory string
+**--directory string**
 Static file server directory. Defaults to the current directory.
 
 Those concerned about the long-term health of their Raspberry Pi's SD card may opt to point raspilive to a RAMDisk so
 that the files are only stored in memory. However, this also means that you will be unable to recover any of the 
 footage if the power is cut.
 
-###### --tls-cert string
+**--tls-cert string**
 Static file server TLS certificate.
 
-###### --tls-key string
+**--tls-key string**
 Static file server TLS key.
 
-###### --segment-time int
+**--segment-time int**
 Target segment duration in seconds. Defaults to `2`.
 
-###### --playlist-size int
+**--playlist-size int**
 Maximum number of playlist entries. Defaults to `10`.
 
-###### --storage-size int
+**--storage-size int**
 Maximum number of unreferenced segments to keep on disk before removal. Defaults to `1`.
 
 ## Installation
