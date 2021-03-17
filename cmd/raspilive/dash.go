@@ -12,7 +12,7 @@ import (
 
 // DashCfg represents the DASH configuration options
 type DashCfg struct {
-	Video        VideoCfg
+	Video        *VideoCfg
 	Port         int
 	Directory    string
 	TLSCert      string
@@ -22,7 +22,7 @@ type DashCfg struct {
 	StorageSize  int // Maximum number of unreferenced segments to keep on disk before removal
 }
 
-func newDashCmd(video VideoCfg) *cobra.Command {
+func newDashCmd(video *VideoCfg) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "dash",
 		Short: "Stream video using DASH",

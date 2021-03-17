@@ -39,8 +39,8 @@ func main() {
 		},
 	}
 
-	rootCmd.AddCommand(newHlsCmd(video))
-	rootCmd.AddCommand(newDashCmd(video))
+	rootCmd.AddCommand(newHlsCmd(&video))
+	rootCmd.AddCommand(newDashCmd(&video))
 
 	rootCmd.PersistentFlags().IntVar(&video.Width, "width", 1280, "video width")
 	rootCmd.PersistentFlags().IntVar(&video.Height, "height", 720, "video height")
