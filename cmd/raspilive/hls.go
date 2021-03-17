@@ -105,6 +105,7 @@ func streamHls(cfg HlsCfg) {
 		Options: hls.Options{
 			Fps:          cfg.Video.Fps,
 			SegmentTime:  cfg.SegmentTime,
+			SegmentType:  cfg.SegmentType,
 			PlaylistSize: cfg.PlaylistSize,
 			StorageSize:  cfg.StorageSize,
 		},
