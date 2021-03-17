@@ -30,7 +30,7 @@ Use "raspilive [command] --help" for more information about a command.
 
 ### Commands
 #### HLS
-The `hls` command muxes the video stream into the [HLS](https://en.wikipedia.org/wiki/HTTP_Live_Streaming) video 
+The `hls` command muxes the video stream into the [HLS](https://en.wikipedia.org/wiki/HTTP_Live_Streaming) video
 streaming format and serves the produced content by starting a static file server.
 
 If you're not familiar with HLS, the technology works by splitting the video stream into small, consumable segments.
@@ -117,7 +117,7 @@ up a [RAM drive](https://en.wikipedia.org/wiki/RAM_drive) so that the files are 
 
 ## Installation
 raspilive uses [raspivid](https://www.raspberrypi.org/documentation/usage/camera/raspicam/raspivid.md) to operate the
-Raspberry Pi Camera Module. This is already available on the Raspbian operating system and can be enabled via 
+Raspberry Pi Camera Module. This is already available on the Raspbian operating system and can be enabled via
 [raspi-config](https://www.raspberrypi.org/documentation/configuration/raspi-config.md).
 
 raspilive also uses [Ffmpeg](https://ffmpeg.org/), a prominent video conversion command line utility, to process the
