@@ -142,14 +142,14 @@ func TestStart(t *testing.T) {
 
 			videoStream := ioutil.NopCloser(strings.NewReader("totallyfakevideostream"))
 
-			mpegdashMuxer := tc.muxer
-			err := mpegdashMuxer.Mux(videoStream)
+			dashMuxer := tc.muxer
+			err := dashMuxer.Mux(videoStream)
 
 			if err != nil {
 				t.Error("Start produced an err", err)
 			}
 
-			ffmpegArgs := mpegdashMuxer.cmd.Args[1:]
+			ffmpegArgs := dashMuxer.cmd.Args[1:]
 
 			if !equal(ffmpegArgs, tc.expectedArgs) {
 				t.Error("Command args do not match, got", ffmpegArgs)
@@ -164,8 +164,8 @@ func TestStartReturnsFfmpegError(t *testing.T) {
 
 	videoStream := ioutil.NopCloser(strings.NewReader("totallyfakevideostream"))
 
-	mpegdashMuxer := Muxer{}
-	err := mpegdashMuxer.Mux(videoStream)
+	dashMuxer := Muxer{}
+	err := dashMuxer.Mux(videoStream)
 
 	if err == nil {
 		t.Error("Start failed to return an error")
@@ -178,9 +178,9 @@ func TestWait(t *testing.T) {
 
 	videoStream := ioutil.NopCloser(strings.NewReader("totallyfakevideostream"))
 
-	mpegdashMuxer := Muxer{}
-	mpegdashMuxer.Mux(videoStream)
-	err := mpegdashMuxer.Wait()
+	dashMuxer := Muxer{}
+	dashMuxer.Mux(videoStream)
+	err := dashMuxer.Wait()
 
 	if err != nil {
 		t.Error("Wait returned an error", err)
@@ -191,8 +191,8 @@ func TestWaitWithoutStartReturnsError(t *testing.T) {
 	execCommand = mockExecCommand
 	defer func() { execCommand = exec.Command }()
 
-	mpegdashMuxer := Muxer{}
-	err := mpegdashMuxer.Wait()
+	dashMuxer := Muxer{}
+	err := dashMuxer.Wait()
 
 	if err == nil || err.Error() != "ffmpeg dash: not started" {
 		t.Error("Wait failed to return correct error when run without Start", err)
@@ -205,13 +205,61 @@ func TestWaitAgainReturnsError(t *testing.T) {
 
 	videoStream := ioutil.NopCloser(strings.NewReader("totallyfakevideostream"))
 
-	mpegdashMuxer := Muxer{}
-	mpegdashMuxer.Mux(videoStream)
-	mpegdashMuxer.Wait()
-	err := mpegdashMuxer.Wait()
+	dashMuxer := Muxer{}
+	dashMuxer.Mux(videoStream)
+	dashMuxer.Wait()
+	err := dashMuxer.Wait()
 
 	if err == nil {
 		t.Error("Wait failed to return an error")
+	}
+}
+
+func TestStringReturnsStringifiedCommand(t *testing.T) {
+	execCommand = mockExecCommand
+	defer func() { execCommand = exec.Command }()
+
+	videoStream := ioutil.NopCloser(strings.NewReader("totallyfakevideostream"))
+	defer videoStream.Close()
+
+	dashMuxer := Muxer{
+		Directory: "dash",
+		Options:   Options{Fps: 30, SegmentTime: 5, PlaylistSize: 25, StorageSize: 50},
+	}
+	dashMuxer.Mux(videoStream)
+
+	cmdStr := dashMuxer.String()
+	expectedCmdStr := "ffmpeg " +
+		"-i pipe:0 " +
+		"-codec copy " +
+		"-f dash " +
+		"-an " +
+		"-dash_segment_type mp4 " +
+		"-media_seg_name raspilive-$Number$.m4s " +
+		"-init_seg_name init.m4s " +
+		"-r 30 " +
+		"-seg_duration 5 " +
+		"-window_size 25 " +
+		"-extra_window_size 50 " +
+		path.Join("dash", "livestream.mpd")
+
+	if !strings.Contains(cmdStr, expectedCmdStr) {
+		t.Error("String returned incorrect value, got:", cmdStr, "wanted:", expectedCmdStr)
+	}
+}
+
+func TestStringReturnsNilForUnstartedOperation(t *testing.T) {
+	execCommand = mockExecCommand
+	defer func() { execCommand = exec.Command }()
+
+	dashMuxer := Muxer{
+		Directory: "dash",
+		Options:   Options{Fps: 30, SegmentTime: 5, PlaylistSize: 25, StorageSize: 50},
+	}
+
+	cmdStr := dashMuxer.String()
+	if cmdStr != "" {
+		t.Error("String returned incorrect value, got:", cmdStr)
 	}
 }
 
