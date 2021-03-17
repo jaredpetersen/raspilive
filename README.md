@@ -35,9 +35,9 @@ streaming format and serves the produced content by starting a static file serve
 
 If you're not familiar with HLS, the technology works by splitting the video stream into small, consumable segments.
 These segments are arranged into a constantly updating playlist of files. Clients periodically read these playlists,
-download the listed files videos, and queue up the segments to produce a seamless playback experience. This process
-is inherently latent but works very well -- [Twitch uses it](https://blog.twitch.tv/en/2017/10/10/live-video-transmuxing-transcoding-f-fmpeg-vs-twitch-transcoder-part-i-489c1c125f28/) to distribute streaming video to
-all of its viewers.
+download the listed videos, and queue up the segments to produce a seamless playback experience.
+[Twitch uses it](https://blog.twitch.tv/en/2017/10/10/live-video-transmuxing-transcoding-f-fmpeg-vs-twitch-transcoder-part-i-489c1c125f28/)
+to distribute streaming video to all of its viewers.
 
 ```
 Stream video using HLS
@@ -70,7 +70,7 @@ The `dash` command muxes the video stream into the
 [DASH](https://en.wikipedia.org/wiki/Dynamic_Adaptive_Streaming_over_HTTP) video streaming format and serves the
 produced content by starting a static file server.
 
-DASH is effectively utilizes the same mechanism for streaming video as HLS. The video is split into small segments and
+DASH effectively utilizes the same mechanism for streaming video as HLS. The video is split into small segments and
 listed in a changing playlist file. Clients download the playlist and the videos listed in it to piece the video
 together seamlessly. And just like HLS, it's an inherently latent method of streaming video.
 
