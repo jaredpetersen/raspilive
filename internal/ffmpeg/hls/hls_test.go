@@ -254,6 +254,54 @@ func TestWaitAgainReturnsError(t *testing.T) {
 	}
 }
 
+func TestStringReturnsStringifiedCommand(t *testing.T) {
+	execCommand = mockExecCommand
+	defer func() { execCommand = exec.Command }()
+
+	videoStream := ioutil.NopCloser(strings.NewReader("totallyfakevideostream"))
+	defer videoStream.Close()
+
+	hlsMuxer := Muxer{
+		Directory: "hls",
+		Options:   Options{Fps: 30, SegmentType: "fmp4", SegmentTime: 5, PlaylistSize: 25, StorageSize: 50},
+	}
+	hlsMuxer.Mux(videoStream)
+
+	cmdStr := hlsMuxer.String()
+	expectedCmdStr := "ffmpeg " +
+		"-i pipe:0 " +
+		"-codec copy " +
+		"-f hls " +
+		"-an " +
+		"-hls_segment_type fmp4 " +
+		"-hls_segment_filename hls/raspilive-%d.m4s " +
+		"-r 30 " +
+		"-hls_time 5 " +
+		"-hls_list_size 25 " +
+		"-hls_delete_threshold 50 " +
+		"-hls_flags split_by_time+delete_segments " +
+		path.Join("hls", "livestream.m3u8")
+
+	if !strings.Contains(cmdStr, expectedCmdStr) {
+		t.Error("String returned incorrect value, got:", cmdStr)
+	}
+}
+
+func TestStringReturnsNilForUnstartedOperation(t *testing.T) {
+	execCommand = mockExecCommand
+	defer func() { execCommand = exec.Command }()
+
+	hlsMuxer := Muxer{
+		Directory: "hls",
+		Options:   Options{Fps: 30, SegmentType: "fmp4", SegmentTime: 5, PlaylistSize: 25, StorageSize: 50},
+	}
+
+	cmdStr := hlsMuxer.String()
+	if cmdStr != "" {
+		t.Error("String returned incorrect value, got:", cmdStr)
+	}
+}
+
 func mockExecCommand(command string, args ...string) *exec.Cmd {
 	cs := append([]string{command}, args...)
 	cmd := exec.Command(os.Args[0], cs...)

@@ -15,7 +15,7 @@ import (
 
 // HlsCfg represents the HLS configuration options
 type HlsCfg struct {
-	Video        VideoCfg
+	Video        *VideoCfg
 	Port         int
 	Directory    string
 	TLSCert      string
@@ -26,7 +26,7 @@ type HlsCfg struct {
 	StorageSize  int    // Maximum number of unreferenced segments to keep on disk before removal
 }
 
-func newHlsCmd(video VideoCfg) *cobra.Command {
+func newHlsCmd(video *VideoCfg) *cobra.Command {
 	cfg := HlsCfg{
 		Video: video,
 	}
@@ -105,6 +105,7 @@ func streamHls(cfg HlsCfg) {
 		Options: hls.Options{
 			Fps:          cfg.Video.Fps,
 			SegmentTime:  cfg.SegmentTime,
+			SegmentType:  cfg.SegmentType,
 			PlaylistSize: cfg.PlaylistSize,
 			StorageSize:  cfg.StorageSize,
 		},

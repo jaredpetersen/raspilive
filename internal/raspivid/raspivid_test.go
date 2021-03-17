@@ -102,13 +102,13 @@ func TestNewStream(t *testing.T) {
 			raspiStream, err := NewStream(tc.options)
 
 			if err != nil {
-				t.Error("NewStream produced an err", err)
+				t.Error("NewStream produced an err:", err)
 			}
 
 			raspividArgs := raspiStream.cmd.Args[1:]
 
 			if !equal(raspividArgs, tc.expectedArgs) {
-				t.Error("Command args do not match, got", raspividArgs)
+				t.Error("Command args do not match, got:", raspividArgs)
 			}
 
 			if raspiStream.Video == nil {
@@ -130,7 +130,7 @@ func TestStart(t *testing.T) {
 	err := raspiStream.Start()
 
 	if err != nil {
-		t.Error("Start produced an err", err)
+		t.Error("Start produced an err:", err)
 	}
 
 	if raspiStream.cmd.Process == nil {
@@ -143,7 +143,7 @@ func TestStart(t *testing.T) {
 	videoText := buf.String()
 
 	if videoText != fakeVideoStreamContent {
-		t.Error("Video output is invalid", videoText)
+		t.Error("Video output is invalid:", videoText)
 	}
 }
 
@@ -167,7 +167,7 @@ func TestStartBadStreamReturnsError(t *testing.T) {
 	err := raspiStream.Start()
 
 	if err == nil || err.Error() != "raspivid: not created" {
-		t.Error("Start failed to return correct error", err)
+		t.Error("Start failed to return correct error:", err)
 	}
 }
 
@@ -192,7 +192,7 @@ func TestWaitBadStreamReturnsError(t *testing.T) {
 	err := raspiStream.Wait()
 
 	if err == nil || err.Error() != "raspivid: not created" {
-		t.Error("Wait failed to return correct error", err)
+		t.Error("Wait failed to return correct error:", err)
 	}
 }
 
@@ -204,7 +204,7 @@ func TestWaitWithoutStartReturnsError(t *testing.T) {
 	err := raspiStream.Wait()
 
 	if err == nil || err.Error() != "raspivid: not started" {
-		t.Error("Wait failed to return correct error", err)
+		t.Error("Wait failed to return correct error:", err)
 	}
 }
 
@@ -219,6 +219,20 @@ func TestWaitAgainReturnsError(t *testing.T) {
 
 	if err == nil {
 		t.Error("Wait failed to return an error")
+	}
+}
+
+func TestStringReturnsStringifiedCommand(t *testing.T) {
+	execCommand = mockExecCommand
+	defer func() { execCommand = exec.Command }()
+
+	options := Options{Width: 1280, Height: 720, Fps: 30, HorizontalFlip: true, VerticalFlip: true}
+	raspiStream, _ := NewStream(options)
+
+	cmdStr := raspiStream.String()
+
+	if !strings.Contains(cmdStr, "raspivid -o - -t 0 --width 1280 --height 720 --framerate 30 --hflip --vflip") {
+		t.Error("String returned incorrect value, got:", cmdStr)
 	}
 }
 
