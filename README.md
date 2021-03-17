@@ -28,89 +28,92 @@ Flags:
 Use "raspilive [command] --help" for more information about a command.
 ```
 
-### Global Flags
-**--width int**
-Video width. Defaults to 1920.
-
-**--height int**
-Video height. Defaults to 1080.
-
-**--fps int**
-Video framerate. Defaults to 30.
-
-**--horizontal-flip**
-Horizontally flip the video.
-
-**--vertical-flip**
-Vertically flip the video.
-
-**--port int**
-Static file server port. Finds an available port if one is not specified.
-
 ### Commands
 #### HLS
-[HLS](https://en.wikipedia.org/wiki/HTTP_Live_Streaming) is a video streaming format that works by splitting the video
-into small consummable segments that are arranged in a continuously changing playlist of files. The client reads from
-the playlist and downloads the video segments as needed. HLS requires a static file server to serve all of these files
-and raspilive provides this out of the box automatically.
+The `hls` command muxes the video stream into the [HLS](https://en.wikipedia.org/wiki/HTTP_Live_Streaming) video 
+streaming format and serves the produced content by starting a static file server.
 
-##### Flags
-**--directory string**
-Static file server directory. Defaults to the current directory.
+If you're not familiar with HLS, the technology works by splitting the video stream into small, consumable segments.
+These segments are arranged into a constantly updating playlist of files. Clients periodically read these playlists,
+download the listed files videos, and queue up the segments to produce a seamless playback experience. This process
+is inherently latent but works very well -- [Twitch uses it](https://blog.twitch.tv/en/2017/10/10/live-video-transmuxing-transcoding-f-fmpeg-vs-twitch-transcoder-part-i-489c1c125f28/) to distribute streaming video to
+all of its viewers.
 
-Those concerned about the long-term health of their Raspberry Pi's SD card may opt to point raspilive to a RAMDisk so
-that the files are only stored in memory. However, this also means that you will be unable to recover any of the 
-footage if the power is cut.
+```
+Stream video using HLS
 
-**--tls-cert string**
-Static file server TLS certificate.
+Usage:
+  raspilive hls [flags]
 
-**--tls-key string**
-Static file server TLS key.
+Flags:
+      --port int              static file server port
+      --directory string      static file server directory
+      --tls-cert string       static file server TLS certificate
+      --tls-key string        static file server TLS key
+      --segment-type string   format of the video segments (valid ["mpegts", "fmp4"], default "mpegts")
+      --segment-time int      target segment duration in seconds (default 2)
+      --playlist-size int     maximum number of playlist entries (default 10)
+      --storage-size int      maximum number of unreferenced segments to keep on disk before removal (default 1)
+  -h, --help                  help for hls
 
-**--segment-type string**
-Format of the video segments. Valid values include `mpegts` and `fmp4`. Defaults to `mpegts`.
-
-**--segment-time int**
-Target segment duration in seconds. Defaults to `2`.
-
-**--playlist-size int**
-Maximum number of playlist entries. Defaults to `10`.
-
-**--storage-size int**
-Maximum number of unreferenced segments to keep on disk before removal. Defaults to `1`.
+Global Flags:
+      --debug             enable debug logging
+      --fps int           video framerate (default 30)
+      --height int        video height (default 720)
+      --horizontal-flip   horizontally flip video
+      --vertical-flip     vertically flip video
+      --width int         video width (default 1280)
+```
 
 #### DASH
-[DASH](https://en.wikipedia.org/wiki/Dynamic_Adaptive_Streaming_over_HTTP), also known as MPEG-DASH, is a video
-streaming format that works by splitting the video into small consummable segments that are arranged in a continuously
-changing playlist of files. The client reads from the playlist and downloads the video segments as needed. DASH
-requires a static file server to serve all of these files and raspilive provides this out of the box automatically.
+The `dash` command muxes the video stream into the
+[DASH](https://en.wikipedia.org/wiki/Dynamic_Adaptive_Streaming_over_HTTP) video streaming format and serves the
+produced content by starting a static file server.
 
-##### Flags
-**--port int**
-Static file server port. Finds an available port if one is not specified.
+DASH is effectively utilizes the same mechanism for streaming video as HLS. The video is split into small segments and
+listed in a changing playlist file. Clients download the playlist and the videos listed in it to piece the video
+together seamlessly. And just like HLS, it's an inherently latent method of streaming video.
 
-**--directory string**
-Static file server directory. Defaults to the current directory.
+```
+Stream video using DASH
 
-Those concerned about the long-term health of their Raspberry Pi's SD card may opt to point raspilive to a RAMDisk so
-that the files are only stored in memory. However, this also means that you will be unable to recover any of the 
-footage if the power is cut.
+Usage:
+  raspilive dash [flags]
 
-**--tls-cert string**
-Static file server TLS certificate.
+Flags:
+      --port int            static file server port
+      --directory string    static file server directory
+      --tls-cert string     static file server TLS certificate
+      --tls-key string      static file server TLS key
+      --segment-time int    target segment duration in seconds (default 2)
+      --playlist-size int   maximum number of playlist entries (default 10)
+      --storage-size int    maximum number of unreferenced segments to keep on disk before removal (default 1)
+  -h, --help                help for dash
 
-**--tls-key string**
-Static file server TLS key.
+Global Flags:
+      --debug             enable debug logging
+      --fps int           video framerate (default 30)
+      --height int        video height (default 720)
+      --horizontal-flip   horizontally flip video
+      --vertical-flip     vertically flip video
+      --width int         video width (default 1280)
+```
 
-**--segment-time int**
-Target segment duration in seconds. Defaults to `2`.
+### Performance Tips
+#### HLS & DASH
+HLS and DASH are inherently latent streaming technologies. However, you can still produce some lower latency video
+streams.
 
-**--playlist-size int**
-Maximum number of playlist entries. Defaults to `10`.
+The general recommendations seem to be:
+- Reduce the segment size
+- Increase the number of segments in the playlist to build up a buffer
 
-**--storage-size int**
-Maximum number of unreferenced segments to keep on disk before removal. Defaults to `1`.
+Experiment with the flags and see what seems to work best for your Pi. We try to provide "sane" defaults but Raspberry
+Pis are computationally diverse so you may find better performance with some tweaking.
+
+Additionally, you may find that the SD card on the Raspberry Pi is a limitation. Fast disk read/writes are important
+and SD cards can only perform so many in their lifetime. For better performance and longevity, you may consider setting
+up a [RAM drive](https://en.wikipedia.org/wiki/RAM_drive) so that the files are stored in memory instead.
 
 ## Installation
 raspilive uses [raspivid](https://www.raspberrypi.org/documentation/usage/camera/raspicam/raspivid.md) to operate the
@@ -123,5 +126,5 @@ streaming video that the Raspberry Pi Camera Module outputs. Version 4.0 or high
 sudo apt-get install ffmpeg
 ```
 
-Download the latest version of raspilive from the [Releases page](https://github.com/jaredpetersen/raspi-live/releases).
+Download the latest version of raspilive from the [Releases page](https://github.com/jaredpetersen/raspilive/releases).
 All of the release binaries are compiled for ARM 6 and are compatible with Raspberry Pi.
