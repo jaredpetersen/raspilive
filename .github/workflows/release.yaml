@@ -32,12 +32,9 @@ jobs:
         with:
           tag_name: ${{ steps.changelog.outputs.version }}
           name: ${{ steps.changelog.outputs.version }}
-          body: ${{ steps.changelog_reader.outputs.changes }}
+          body: ${{ steps.changelog.outputs.changes }}
           draft: false
           prerelease: false
-          files: |
-            raspilive
-            README.md
-            LICENSE
+          files: raspilive
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
