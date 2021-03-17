@@ -30,8 +30,8 @@ func main() {
 
 	rootCmd := &cobra.Command{
 		Use:   "raspilive",
-		Short: "raspilive is a livestreaming tool for the Raspberry Pi Camera Module",
-		Long: "raspilive is a livestreaming tool for the Raspberry Pi Camera Module\n\n" +
+		Short: "raspilive streams video from the Raspberry Pi Camera Module to the web",
+		Long: "raspilive streams video from the Raspberry Pi Camera Module to the web\n\n" +
 			"For more information visit https://github.com/jaredpetersen/raspilive",
 		Version: "1.0.0",
 		PersistentPreRun: func(cmd *cobra.Command, args []string) {
