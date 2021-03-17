@@ -53,7 +53,12 @@ func main() {
 }
 
 func setLogLevel(debug bool) {
+	var logLevel zerolog.Level
 	if debug {
-		zerolog.SetGlobalLevel(zerolog.DebugLevel)
+		logLevel = zerolog.DebugLevel
+	} else {
+		logLevel = zerolog.InfoLevel
 	}
+
+	zerolog.SetGlobalLevel(logLevel)
 }
