@@ -10,6 +10,11 @@ Build for Raspberry Pi:
 env GOOS=linux GOARCH=arm GOARM=6 go build ./cmd/raspilive
 ```
 
+Go install command:
+```zsh
+go install github.com/jaredpetersen/raspilive/cmd/raspilive
+```
+
 Run tests:
 ```zsh
 go test ./...
