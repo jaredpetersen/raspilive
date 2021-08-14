@@ -18,6 +18,7 @@ type Options struct {
 	Fps            int  // Framerate of the video
 	HorizontalFlip bool // Flip the video horizontally
 	VerticalFlip   bool // Flip the video vertically
+	NoPreview      bool // Disable preview mode
 }
 
 // Stream represents a Raspberry Pi camera video streamer.
@@ -41,13 +42,17 @@ func NewStream(options Options) (*Stream, error) {
 	if options.Fps != 0 {
 		args = append(args, "--framerate", strconv.Itoa(options.Fps))
 	}
-
+	
 	if options.HorizontalFlip {
 		args = append(args, "--hflip")
 	}
 
 	if options.VerticalFlip {
 		args = append(args, "--vflip")
+	}
+	
+	if options.NoPreview != 0 {
+		args = append(args, "--nopreview")
 	}
 
 	cmd := execCommand("raspivid", args...)
