@@ -81,7 +81,7 @@ func TestNewStream(t *testing.T) {
 			},
 		},
 		{
-			Options{Width: 1280, Height: 720, Fps: 30, HorizontalFlip: true, VerticalFlip: true},
+			Options{Width: 1280, Height: 720, Fps: 30, HorizontalFlip: true, VerticalFlip: true, NoPreview: true},
 			[]string{
 				"raspivid",
 				"-o", "-",
@@ -89,7 +89,8 @@ func TestNewStream(t *testing.T) {
 				"--width", "1280",
 				"--height", "720",
 				"--framerate", "30",
-				"--hflip", "--vflip",
+				"--hflip", "--vflip", 
+				"--no-preview"
 			},
 		},
 	}

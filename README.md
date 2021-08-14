@@ -23,6 +23,7 @@ Flags:
       --horizontal-flip   horizontally flip video
   -v, --version           version for raspilive
       --vertical-flip     vertically flip video
+      --no-preview        disable preview mode
       --width int         video width (default 1280)
 
 Use "raspilive [command] --help" for more information about a command.
@@ -63,6 +64,7 @@ Global Flags:
       --horizontal-flip   horizontally flip video
       --vertical-flip     vertically flip video
       --width int         video width (default 1280)
+      --no-preview        disable preview mode
 ```
 
 #### DASH
