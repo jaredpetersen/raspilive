@@ -18,6 +18,7 @@ type VideoCfg struct {
 	Fps            int
 	HorizontalFlip bool
 	VerticalFlip   bool
+	NoPreview	   bool
 }
 
 func main() {
@@ -47,6 +48,7 @@ func main() {
 	rootCmd.PersistentFlags().IntVar(&video.Fps, "fps", 30, "video framerate")
 	rootCmd.PersistentFlags().BoolVar(&video.HorizontalFlip, "horizontal-flip", false, "horizontally flip video")
 	rootCmd.PersistentFlags().BoolVar(&video.VerticalFlip, "vertical-flip", false, "vertically flip video")
+	rootCmd.PersistentFlags().BoolVar(&video.NoPreview, "no-preview", false, "disable preview mode")
 	rootCmd.PersistentFlags().BoolVar(&debug, "debug", false, "enable debug logging")
 
 	rootCmd.Execute()
