@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/justinas/alice"
+	"github.com/rs/cors"
 	"github.com/rs/zerolog/hlog"
 	"github.com/rs/zerolog/log"
 )
@@ -25,6 +26,7 @@ type Static struct {
 	Cert      string // Location of a certificate file for TLS
 	Key       string // Location of a key file for TLS
 	Directory string // Directory the files should be served from
+	CORS      string
 	listener  net.Listener
 	server    http.Server
 }
@@ -79,6 +81,17 @@ func (stcsrv *Static) serve() error {
 	middlewareChain = middlewareChain.Append(hlog.RemoteAddrHandler("ip"))
 	middlewareChain = middlewareChain.Append(hlog.UserAgentHandler("user_agent"))
 	middlewareChain = middlewareChain.Append(hlog.RefererHandler("referer"))
+
+	// If our CORS argument is populated, enable the CORS middleware.
+	if stcsrv.CORS != "" {
+		// Used for debugging, may be removed.
+		//fmt.Println("CORS: ", stcsrv.CORS)
+		c := cors.New(cors.Options{
+			AllowedOrigins: []string{stcsrv.CORS},
+		})
+
+		middlewareChain = middlewareChain.Append(c.Handler)
+	}
 
 	router := http.NewServeMux()
 	router.Handle("/camera/", middlewareChain.Then(http.StripPrefix("/camera", http.FileServer(http.Dir(stcsrv.Directory)))))

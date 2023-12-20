@@ -24,6 +24,7 @@ type HlsCfg struct {
 	SegmentTime  int    // Segment length target duration in seconds
 	PlaylistSize int    // Maximum number of playlist entries
 	StorageSize  int    // Maximum number of unreferenced segments to keep on disk before removal
+	CORS         string // https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
 }
 
 func newHlsCmd(video *VideoCfg) *cobra.Command {
@@ -53,6 +54,8 @@ func newHlsCmd(video *VideoCfg) *cobra.Command {
 	cmd.Flags().IntVar(&cfg.PlaylistSize, "playlist-size", 10, "maximum number of playlist entries")
 
 	cmd.Flags().IntVar(&cfg.StorageSize, "storage-size", 1, "maximum number of unreferenced segments to keep on disk before removal")
+
+	cmd.Flags().StringVar(&cfg.CORS, "cors", "", "whether or not to include a CORS header")
 
 	cmd.Flags().SortFlags = false
 
@@ -86,7 +89,7 @@ func isValidHlsCfg(cfg HlsCfg) bool {
 }
 
 func streamHls(cfg HlsCfg) {
-	// Set up raspivid stream
+	// Set up libcamera-vid stream
 	raspiOptions := libcameravid.Options{
 		Width:          cfg.Video.Width,
 		Height:         cfg.Video.Height,
@@ -117,6 +120,7 @@ func streamHls(cfg HlsCfg) {
 		Directory: cfg.Directory,
 		Cert:      cfg.TLSCert,
 		Key:       cfg.TLSKey,
+		CORS:      cfg.CORS,
 	}
 
 	// Set up a channel for exiting

@@ -54,6 +54,7 @@ Flags:
       --segment-time int      target segment duration in seconds (default 2)
       --playlist-size int     maximum number of playlist entries (default 10)
       --storage-size int      maximum number of unreferenced segments to keep on disk before removal (default 1)
+      --cors string           allow cross domain HTTP requests, https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS (default "", supports * wildcard (e.g. `--cors "*"`))
   -h, --help                  help for hls
 
 Global Flags:
@@ -88,6 +89,7 @@ Flags:
       --segment-time int    target segment duration in seconds (default 2)
       --playlist-size int   maximum number of playlist entries (default 10)
       --storage-size int    maximum number of unreferenced segments to keep on disk before removal (default 1)
+      --cors string         allow cross domain HTTP requests, https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS (default "", supports * wildcard (e.g. `--cors "*"`))
   -h, --help                help for dash
 
 Global Flags:

@@ -17,9 +17,10 @@ type DashCfg struct {
 	Directory    string
 	TLSCert      string
 	TLSKey       string
-	SegmentTime  int // Segment length target duration in seconds
-	PlaylistSize int // Maximum number of playlist entries
-	StorageSize  int // Maximum number of unreferenced segments to keep on disk before removal
+	SegmentTime  int    // Segment length target duration in seconds
+	PlaylistSize int    // Maximum number of playlist entries
+	StorageSize  int    // Maximum number of unreferenced segments to keep on disk before removal
+	CORS         string // https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
 }
 
 func newDashCmd(video *VideoCfg) *cobra.Command {
@@ -47,6 +48,8 @@ func newDashCmd(video *VideoCfg) *cobra.Command {
 
 	cmd.Flags().IntVar(&cfg.StorageSize, "storage-size", 1, "maximum number of unreferenced segments to keep on disk before removal")
 
+	cmd.Flags().StringVar(&cfg.CORS, "cors", "", "whether or not to include a CORS header")
+
 	cmd.Flags().SortFlags = false
 
 	cmd.Run = func(cmd *cobra.Command, args []string) {
@@ -57,7 +60,7 @@ func newDashCmd(video *VideoCfg) *cobra.Command {
 }
 
 func streamDash(cfg DashCfg) {
-	// Set up raspivid stream
+	// Set up libcameravid stream
 	raspiOptions := libcameravid.Options{
 		Width:          cfg.Video.Width,
 		Height:         cfg.Video.Height,
@@ -87,6 +90,7 @@ func streamDash(cfg DashCfg) {
 		Directory: cfg.Directory,
 		Cert:      cfg.TLSCert,
 		Key:       cfg.TLSKey,
+		CORS:      cfg.CORS,
 	}
 
 	// Set up a channel for exiting
