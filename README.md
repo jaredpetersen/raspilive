@@ -1,5 +1,7 @@
 # raspi-live-libcamera
-📷 raspi-live-libcamera is a command-line application that streams video from the Raspberry Pi Camera module using the new libcamera software to the web. This was forked and updated from an older version by https://github.com/jaredpetersen in which the older version used the `raspivid` application, which is now deprecated.
+📷 raspi-live-libcamera is a command-line application that streams video from the Raspberry Pi Camera module using the new libcamera software to the web. It also now includes CORS functionality for the HTTP server.
+
+This was forked and updated from an older version by https://github.com/jaredpetersen in which the older version used the `raspivid` application, which is now deprecated.
 
 ## Usage
 ```
@@ -25,7 +27,7 @@ Flags:
       --vertical-flip     vertically flip video
       --width int         video width (default 1280)
 
-Use "raspilive [command] --help" for more information about a command.
+Use "raspi-live-libcamera [command] --help" for more information about a command.
 ```
 
 ### Commands
