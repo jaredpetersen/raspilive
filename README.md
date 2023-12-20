@@ -125,3 +125,5 @@ streaming video that the Raspberry Pi Camera Module outputs. Version 4.0 or high
 ```zsh
 sudo apt-get install ffmpeg
 ```
+
+Download the latest version of raspi-live-libcamera from the [Releases page](https://github.com/amd940/raspi-live-libcamera/releases). All of the release binaries are compiled for ARM 6 and are compatible with Raspberry Pi.
