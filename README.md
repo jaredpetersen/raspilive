@@ -1,14 +1,14 @@
-# raspilive
-📷 raspilive is a command-line application that streams video from the Raspberry Pi Camera module to the web
+# raspi-live-libcamera
+📷 raspi-live-libcamera is a command-line application that streams video from the Raspberry Pi Camera module using the new libcamera software to the web
 
 ## Usage
 ```
-raspilive streams video from the Raspberry Pi Camera Module to the web
+raspi-live-libcamera streams video from the Raspberry Pi Camera Module to the web
 
-For more information visit https://github.com/jaredpetersen/raspilive
+For more information visit https://github.com/amd940/raspi-live-libcamera
 
 Usage:
-  raspilive [command]
+  raspi-live [command]
 
 Available Commands:
   hls         Stream video using HLS
@@ -43,7 +43,7 @@ to distribute streaming video to all of its viewers.
 Stream video using HLS
 
 Usage:
-  raspilive hls [flags]
+  raspi-live hls [flags]
 
 Flags:
       --port int              static file server port
@@ -78,7 +78,7 @@ together seamlessly.
 Stream video using DASH
 
 Usage:
-  raspilive dash [flags]
+  raspi-live dash [flags]
 
 Flags:
       --port int            static file server port
@@ -116,15 +116,12 @@ and SD cards can only perform so many in their lifetime. For better performance 
 up a [RAM drive](https://en.wikipedia.org/wiki/RAM_drive) so that the files are stored in memory instead.
 
 ## Installation
-raspilive uses [raspivid](https://www.raspberrypi.org/documentation/usage/camera/raspicam/raspivid.md) to operate the
-Raspberry Pi Camera Module. This is already available on the Raspbian operating system and can be enabled via
+raspi-live-libcamera uses [libcamera](https://www.raspberrypi.com/documentation/computers/camera_software.html#rpicam-vid) to operate the
+Raspberry Pi Camera Module (Note: the documentation needs to be updated, `rpicam-*` should instead be `libcamera-*`). This is already available on the Raspbian operating system and can be enabled via
 [raspi-config](https://www.raspberrypi.org/documentation/configuration/raspi-config.md).
 
-raspilive also uses [Ffmpeg](https://ffmpeg.org/), a prominent video conversion command line utility, to process the
+raspi-live-libcamera also uses [Ffmpeg](https://ffmpeg.org/), a prominent video conversion command line utility, to process the
 streaming video that the Raspberry Pi Camera Module outputs. Version 4.0 or higher is required.
 ```zsh
 sudo apt-get install ffmpeg
 ```
-
-Download the latest version of raspilive from the [Releases page](https://github.com/jaredpetersen/raspilive/releases).
-All of the release binaries are compiled for ARM 6 and are compatible with Raspberry Pi.
