@@ -29,10 +29,10 @@ func main() {
 	var video VideoCfg
 
 	rootCmd := &cobra.Command{
-		Use:   "raspilive",
-		Short: "raspilive streams video from the Raspberry Pi Camera Module to the web",
-		Long: "raspilive streams video from the Raspberry Pi Camera Module to the web\n\n" +
-			"For more information visit https://github.com/jaredpetersen/raspilive",
+		Use:   "raspi-live-libcamera",
+		Short: "raspi-live-libcamera streams video from the Raspberry Pi Camera Module to the web",
+		Long: "raspi-live-libcamera streams video from the Raspberry Pi Camera Module to the web\n\n" +
+			"For more information visit https://github.com/amd940/raspi-live-libcamera",
 		Version: "1.0.0",
 		PersistentPreRun: func(cmd *cobra.Command, args []string) {
 			setLogLevel(debug)

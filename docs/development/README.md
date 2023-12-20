@@ -2,17 +2,17 @@
 ## Useful Commands
 Build for local:
 ```zsh
-go build ./cmd/raspilive
+go build ./cmd/raspi-live-libcamera
 ```
 
 Build for Raspberry Pi:
 ```zsh
-env GOOS=linux GOARCH=arm GOARM=6 go build ./cmd/raspilive
+env GOOS=linux GOARCH=arm GOARM=6 go build ./cmd/raspi-live-libcamera
 ```
 
 Go install command:
 ```zsh
-go install github.com/jaredpetersen/raspilive/cmd/raspilive
+go install github.com/amd940/rraspi-live-libcamera/cmd/raspi-live-libcamera
 ```
 
 Run tests:
@@ -24,5 +24,5 @@ go test ./... -cover
 
 Copy binary from localhost to the Raspberry Pi:
 ```zsh
-scp raspilive pi@raspberrypi:/home/pi
+scp raspi-live-libcamera pi@raspberrypi:/home/pi
 ```

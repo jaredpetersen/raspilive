@@ -1,4 +1,4 @@
-package raspivid
+package libcameravid
 
 import (
 	"errors"
@@ -11,7 +11,7 @@ var execCommand = exec.Command
 
 // Options represents a Raspberry Pi camera video streamer.
 //
-// Raspivid will step in and provide its own defaults if a value is not provided.
+// libcameravid will step in and provide its own defaults if a value is not provided.
 type Options struct {
 	Width          int  // Width of the video
 	Height         int  // Height of the video
@@ -50,7 +50,7 @@ func NewStream(options Options) (*Stream, error) {
 		args = append(args, "--vflip")
 	}
 
-	cmd := execCommand("raspivid", args...)
+	cmd := execCommand("libcamera-vid", args...)
 	video, err := cmd.StdoutPipe()
 
 	if err != nil {
@@ -63,7 +63,7 @@ func NewStream(options Options) (*Stream, error) {
 // Start begins the video stream.
 func (strm *Stream) Start() error {
 	if strm.cmd == nil {
-		return errors.New("raspivid: not created")
+		return errors.New("libcamera-vid: not created")
 	}
 
 	return strm.cmd.Start()
@@ -74,10 +74,10 @@ func (strm *Stream) Start() error {
 // The stream operation must have been started by Start.
 func (strm *Stream) Wait() error {
 	if strm.cmd == nil {
-		return errors.New("raspivid: not created")
+		return errors.New("libcamera-vid: not created")
 	}
 	if strm.cmd.Process == nil {
-		return errors.New("raspivid: not started")
+		return errors.New("libcamera-vid: not started")
 	}
 
 	return strm.cmd.Wait()

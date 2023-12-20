@@ -1,4 +1,4 @@
-module github.com/jaredpetersen/raspilive
+module github.com/amd940/raspi-live-libcamera
 
 go 1.16
 

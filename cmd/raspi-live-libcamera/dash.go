@@ -3,9 +3,9 @@ package main
 import (
 	"errors"
 
-	"github.com/jaredpetersen/raspilive/internal/ffmpeg/dash"
-	"github.com/jaredpetersen/raspilive/internal/raspivid"
-	"github.com/jaredpetersen/raspilive/internal/server"
+	"github.com/amd940/raspi-live-libcamera/internal/ffmpeg/dash"
+	"github.com/amd940/raspi-live-libcamera/internal/libcameravid"
+	"github.com/amd940/raspi-live-libcamera/internal/server"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )
@@ -58,14 +58,14 @@ func newDashCmd(video *VideoCfg) *cobra.Command {
 
 func streamDash(cfg DashCfg) {
 	// Set up raspivid stream
-	raspiOptions := raspivid.Options{
+	raspiOptions := libcameravid.Options{
 		Width:          cfg.Video.Width,
 		Height:         cfg.Video.Height,
 		Fps:            cfg.Video.Fps,
 		HorizontalFlip: cfg.Video.HorizontalFlip,
 		VerticalFlip:   cfg.Video.VerticalFlip,
 	}
-	raspiStream, err := raspivid.NewStream(raspiOptions)
+	raspiStream, err := libcameravid.NewStream(raspiOptions)
 	if err != nil {
 		log.Fatal().Msg("Encountered an error streaming video from the Raspberry Pi Camera Module")
 	}
@@ -123,7 +123,7 @@ func streamDash(cfg DashCfg) {
 	srv.Shutdown(serverShutdownDeadline)
 }
 
-func muxDash(raspiStream *raspivid.Stream, muxer *dash.Muxer) error {
+func muxDash(raspiStream *libcameravid.Stream, muxer *dash.Muxer) error {
 	if err := muxer.Mux(raspiStream.Video); err != nil {
 		log.Debug().Err(err).Msg("Encountered an error starting video mux")
 		return err
@@ -134,7 +134,7 @@ func muxDash(raspiStream *raspivid.Stream, muxer *dash.Muxer) error {
 		log.Debug().Err(err).Msg("Encountered an error starting video stream")
 		return err
 	}
-	log.Debug().Str("cmd", raspiStream.String()).Msg("Started raspivid")
+	log.Debug().Str("cmd", raspiStream.String()).Msg("Started libcamera-vid")
 
 	if err := muxer.Wait(); err != nil {
 		log.Debug().Err(err).Msg("Encountered an error waiting for video mux")

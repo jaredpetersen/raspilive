@@ -1,5 +1,5 @@
 # raspi-live-libcamera
-📷 raspi-live-libcamera is a command-line application that streams video from the Raspberry Pi Camera module using the new libcamera software to the web
+📷 raspi-live-libcamera is a command-line application that streams video from the Raspberry Pi Camera module using the new libcamera software to the web. This was forked and updated from an older version by https://github.com/jaredpetersen in which the older version used the `raspivid` application, which is now deprecated.
 
 ## Usage
 ```
@@ -8,7 +8,7 @@ raspi-live-libcamera streams video from the Raspberry Pi Camera Module to the we
 For more information visit https://github.com/amd940/raspi-live-libcamera
 
 Usage:
-  raspi-live [command]
+  raspi-live-libcamera [command]
 
 Available Commands:
   hls         Stream video using HLS
@@ -43,7 +43,7 @@ to distribute streaming video to all of its viewers.
 Stream video using HLS
 
 Usage:
-  raspi-live hls [flags]
+  raspi-live-libcamera hls [flags]
 
 Flags:
       --port int              static file server port
@@ -78,7 +78,7 @@ together seamlessly.
 Stream video using DASH
 
 Usage:
-  raspi-live dash [flags]
+  raspi-live-libcamera dash [flags]
 
 Flags:
       --port int            static file server port
